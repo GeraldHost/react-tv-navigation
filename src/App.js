@@ -1,24 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Provider, useDispatch, useSelector } from "react-redux";
+
+import { right, left, store } from "./focusStore";
+import { RootProvider, Focusable } from "./Focusable";
+
+import "./App.css";
+
+function Debug() {
+  const state = useSelector((s) => s);
+  const dispatch = useDispatch();
+
+  const handleRight = () => {
+    dispatch(right());
+  };
+
+  const handleLeft = () => {
+    dispatch(left());
+  };
+
+  return (
+    <>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
+      <button onClick={handleLeft}>left</button>
+      <button onClick={handleRight}>right</button>
+    </>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <RootProvider>
+        <Focusable itemKey="root">
+          <Focusable itemKey="left"></Focusable>
+          <Focusable itemKey="right">
+            <Focusable itemKey="right-one"></Focusable>
+            <Focusable itemKey="right-two">
+              <Focusable itemKey="inner"></Focusable>
+            </Focusable>
+            <Focusable itemKey="right-three"></Focusable>
+          </Focusable>
+        </Focusable>
+      </RootProvider>
+      <Debug />
+    </Provider>
   );
 }
 
