@@ -31,14 +31,10 @@ function App() {
   return (
     <Provider store={store}>
       <RootProvider>
-        <Focusable itemKey="root">
-          <Focusable itemKey="left"></Focusable>
-          <Focusable itemKey="right">
-            <Focusable itemKey="right-one"></Focusable>
-            <Focusable itemKey="right-two">
-              <Focusable itemKey="inner"></Focusable>
-            </Focusable>
-            <Focusable itemKey="right-three"></Focusable>
+        <Focusable itemKey="node">
+          <Focusable itemKey="node-a"></Focusable>
+          <Focusable itemKey="node-b">
+            <Focusable itemKey="node-c"></Focusable>
           </Focusable>
         </Focusable>
       </RootProvider>
