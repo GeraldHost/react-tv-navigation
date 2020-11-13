@@ -1,28 +1,27 @@
 import React from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
-import { right, left, store } from "./focusStore";
+import { right, left, store, down, up } from "./focusStore";
 import { RootProvider, Focusable } from "./Focusable";
 
 import "./App.css";
 
 function Debug() {
-  const state = useSelector((s) => s);
+  //const state = useSelector((s) => s);
   const dispatch = useDispatch();
 
-  const handleRight = () => {
-    dispatch(right());
-  };
+  const handleRight = () => void dispatch(right());
+  const handleLeft = () => void dispatch(left());
+  const handleDown = () => void dispatch(down());
+  const handleUp = () => void dispatch(up());
 
-  const handleLeft = () => {
-    dispatch(left());
-  };
-
+  // <pre>{JSON.stringify(state, null, 2)}</pre>
   return (
     <>
-      <pre>{JSON.stringify(state, null, 2)}</pre>
       <button onClick={handleLeft}>left</button>
       <button onClick={handleRight}>right</button>
+      <button onClick={handleDown}>down</button>
+      <button onClick={handleUp}>up</button>
     </>
   );
 }
@@ -31,8 +30,11 @@ function App() {
   return (
     <Provider store={store}>
       <RootProvider>
-        <Focusable name="node-a"></Focusable>
-        <Focusable name="node-b"></Focusable>
+        <Focusable name="node-a-1" type="col"></Focusable>
+        <Focusable name="node-a-2" type="col">
+          <Focusable name="node-a-3" type="row" />
+          <Focusable name="node-a-4" type="row" />
+        </Focusable>
       </RootProvider>
       <Debug />
     </Provider>
