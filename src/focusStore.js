@@ -45,22 +45,35 @@ const search = (tree, callback) => {
   return tree.children.find((node) => search(node, callback));
 };
 
-const nextNode = (tree, current) => {
-  if (tree.parent === null && tree.name === current) {
-    // <- diff
-    return tree.children[0]; // <- |
-  } // <- |
+/**
+ * Get the next node in the tree
+ * @param current {String} name of the current node
+ * @param direction {forward|backward} direction
+ */
+const traverseTree = (tree, current, direction) => {
+  if (
+    direction === "forward" &&
+    tree.parent === null &&
+    tree.name === current
+  ) {
+    return tree.children[0];
+  }
+
   const search = (node) => {
-    // do this recurrsively
-    // find child index
     const currentIndex = node.children.findIndex(
       (child) => child.name === current
     );
-    const nextSibling = !!~currentIndex && node.children[currentIndex + 1];
+    const nextSiblingIncrement = direction === "forward" ? 1 : -1;
+    const nextSibling =
+      !!~currentIndex && node.children[currentIndex + nextSiblingIncrement];
     if (nextSibling) {
       return nextSibling;
     } else if (!!~currentIndex) {
-      return node.children[currentIndex].children[0];
+      if (direction === "forward") {
+        return node.children[currentIndex].children[0];
+      } else {
+        return node;
+      }
     } else {
       return node.children.reduce((_, node) => search(node), null);
     }
@@ -68,51 +81,34 @@ const nextNode = (tree, current) => {
   return search(tree);
 };
 
-const prevNode = (tree, current) => {
-  const search = (node) => {
-    // do this recurrsively
-    // find child index
-    const currentIndex = node.children.findIndex(
-      (child) => child.name === current
-    );
-    const prevSibling = !!~currentIndex && node.children[currentIndex - 1]; // <- diff
-    if (prevSibling) {
-      return prevSibling;
-    } else if (!!~currentIndex) {
-      return node; // <- diff
-    } else {
-      return node.children.reduce((_, node) => search(node), null);
-    }
-  };
-  return search(tree);
-};
+const nextNode = (tree, current) => traverseTree(tree, current, "forward");
+
+const prevNode = (tree, current) => traverseTree(tree, current, "backward");
 
 const reduceAddFocusable = (state, action) => {
-  const { parent, itemKey, type } = action.payload;
-  const newTree = addNode(state.tree, parent, { name: itemKey, type });
+  const { parent, name, type } = action.payload;
+  const newTree = addNode(state.tree, parent, { name, type });
   return { ...state, tree: newTree };
 };
 
 const reduceInitFocusable = (state, action) => {
-  return { ...state, activeItem: state.activeItem || action.payload };
+  return { ...state, activeNode: state.activeNode || action.payload };
 };
 
 const reduceRight = (state) => {
-  const next = nextNode(state.tree, state.activeItem);
-  return { ...state, activeItem: next.name };
+  const next = nextNode(state.tree, state.activeNode);
+  return { ...state, activeNode: next.name };
 };
 
 const reduceLeft = (state) => {
-  const next = prevNode(state.tree, state.activeItem);
-  console.log("left", next.name);
-  return { ...state, activeItem: next.name };
+  const next = prevNode(state.tree, state.activeNode);
+  return { ...state, activeNode: next.name };
 };
 
 const focus = createReducer(
   {
     tree: createNode(null, { name: "root", type: TYPE_ROW }),
-    activeItem: "root",
-    activeDepth: 0,
+    activeNode: "root",
   },
   {
     [addFocusable]: reduceAddFocusable,

@@ -18,10 +18,9 @@ function Debug() {
     dispatch(left());
   };
 
-
   return (
     <>
-      <pre>{false && JSON.stringify(state, null, 2)}</pre>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
       <button onClick={handleLeft}>left</button>
       <button onClick={handleRight}>right</button>
     </>
@@ -32,10 +31,8 @@ function App() {
   return (
     <Provider store={store}>
       <RootProvider>
-        <Focusable itemKey="node-a">
-        </Focusable>
-        <Focusable itemKey="node-a-a">
-        </Focusable>
+        <Focusable name="node-a"></Focusable>
+        <Focusable name="node-b"></Focusable>
       </RootProvider>
       <Debug />
     </Provider>

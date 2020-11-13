@@ -10,30 +10,26 @@ const useWillMount = (fn) => {
   useMemo(() => fn(), []);
 };
 
-export const Focusable = ({ children, itemKey, type = "row" }) => {
+export const Focusable = ({ children, name, type = "row" }) => {
   const { parent } = useFocus();
   const dispatch = useDispatch();
-  const activeItem = useSelector((state) => state.activeItem);
+  const activeNode = useSelector((state) => state.activeNode);
 
   useWillMount(() => {
-    dispatch(addFocusable({ parent, itemKey, type }));
+    dispatch(addFocusable({ parent, name, type }));
   });
 
-  const isActive = activeItem === itemKey;
+  const isActive = activeNode === name;
 
   return (
-    <FocusContext.Provider value={{ parent: itemKey }}>
-      {itemKey}
+    <FocusContext.Provider value={{ parent: name }}>
       <div className={`focusable ${isActive && "active"}`}>{children}</div>
     </FocusContext.Provider>
   );
 };
 
-export const RootProvider = ({ children }) => {
-  const firstActiveIndex = 0;
-  return (
-    <FocusContext.Provider value={{ parent: null }}>
-      <Focusable itemKey="root">{children}</Focusable>
-    </FocusContext.Provider>
-  );
-};
+export const RootProvider = ({ children }) => (
+  <FocusContext.Provider value={{ parent: null }}>
+    <Focusable name="root">{children}</Focusable>
+  </FocusContext.Provider>
+);
