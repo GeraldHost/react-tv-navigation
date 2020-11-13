@@ -32,6 +32,8 @@ export const Focusable = connect((state, props) => ({
 
 export const RootProvider = ({ children }) => (
   <FocusContext.Provider value={{ parent: null }}>
-    <Focusable name="root">{children}</Focusable>
+    <Focusable name="root" type="row">
+      {children}
+    </Focusable>
   </FocusContext.Provider>
 );
