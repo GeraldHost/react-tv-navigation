@@ -30,11 +30,11 @@ function App() {
   return (
     <Provider store={store}>
       <RootProvider>
-        <Focusable name="node-a-1" type="col"></Focusable>
-        <Focusable name="node-a-2" type="col">
-          <Focusable name="node-a-3" type="row" />
-          <Focusable name="node-a-4" type="row" />
+        <Focusable name="node-a" type="col">
+          <Focusable name="node-a-1" type="row"></Focusable>
+          <Focusable name="node-a-2" type="row"></Focusable>
         </Focusable>
+        <Focusable name="node-b-1" type="col"></Focusable>
       </RootProvider>
       <Debug />
     </Provider>
