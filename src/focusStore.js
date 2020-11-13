@@ -42,16 +42,17 @@ const search = (tree, callback) => {
 };
 
 const nextNode = (tree, current) => {
-  if (tree.parent === null && tree.name === current) { // <- diff
-    return tree.children[0];                           // <- | 
-  }                                                    // <- |
+  if (tree.parent === null && tree.name === current) {
+    // <- diff
+    return tree.children[0]; // <- |
+  } // <- |
   const search = (node) => {
     // do this recurrsively
     // find child index
     const currentIndex = node.children.findIndex(
       (child) => child.name === current
     );
-    const nextSibling = !!~currentIndex && node.children[currentIndex + 1]
+    const nextSibling = !!~currentIndex && node.children[currentIndex + 1];
     if (nextSibling) {
       return nextSibling;
     } else if (!!~currentIndex) {
@@ -70,7 +71,7 @@ const prevNode = (tree, current) => {
     const currentIndex = node.children.findIndex(
       (child) => child.name === current
     );
-    const prevSibling = !!~currentIndex && node.children[currentIndex - 1] // <- diff
+    const prevSibling = !!~currentIndex && node.children[currentIndex - 1]; // <- diff
     if (prevSibling) {
       return prevSibling;
     } else if (!!~currentIndex) {
@@ -84,11 +85,7 @@ const prevNode = (tree, current) => {
 
 const reduceAddFocusable = (state, action) => {
   const { parent, itemKey } = action.payload;
-  const newTree = addNode(
-    JSON.parse(JSON.stringify(state.tree)),
-    parent,
-    itemKey
-  );
+  const newTree = addNode(state.tree, parent, itemKey);
   return { ...state, tree: newTree };
 };
 
