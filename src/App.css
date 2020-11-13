@@ -3,31 +3,21 @@
   margin: 6px;
   flex: 1;
   padding: 6px;
-  border: dashed 2px orange;
+  border: dashed 2px blue;
 }
 
 .focusable.active {
-  border-color: black !important;
+  border: 2px black solid !important;
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.focusable > .focusable {
-  border-color: red;
+.focusable.col {
+  flex-direction: column;
+  background-color: lightblue;
 }
 
-.focusable > .focusable > .focusable {
-  border-color: green;
-}
-
-.focusable > .focusable > .focusable > .focusable {
-  border-color: pink;
-}
-
-.focusable > .focusable > .focusable > .focusable > .focusable {
-  border-color: yellow;
-}
-
-.focusable > .focusable > .focusable > .focusable > .focusable > .focusable {
-  border-color: blue;
+.focusable.row {
+  flex-direction: row;
+  background-color: lightyellow;
 }
 
