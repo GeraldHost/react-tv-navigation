@@ -1,13 +1,17 @@
 import { createAction, createReducer, configureStore } from "@reduxjs/toolkit";
 
+const TYPE_ROW = "row";
+const TYPE_COL = "col";
+
 export const addFocusable = createAction("ADD_LAYER");
 export const initFocusable = createAction("INIT");
 
 export const right = createAction("RIGHT");
 export const left = createAction("LEFT");
 
-const createNode = (parent, name) => ({
+const createNode = (parent, { name, type }) => ({
   name,
+  type,
   parent,
   children: [],
 });
@@ -26,9 +30,9 @@ const walk = (tree, target, callback) => {
   return { ...tree, children };
 };
 
-const addNode = (tree, parent, nodeName) => {
+const addNode = (tree, parent, { name, type }) => {
   const callback = (node) => {
-    const children = [...node.children, createNode(parent, nodeName)];
+    const children = [...node.children, createNode(parent, { name, type })];
     return { ...node, children };
   };
   return walk(tree, parent, callback);
@@ -84,8 +88,8 @@ const prevNode = (tree, current) => {
 };
 
 const reduceAddFocusable = (state, action) => {
-  const { parent, itemKey } = action.payload;
-  const newTree = addNode(state.tree, parent, itemKey);
+  const { parent, itemKey, type } = action.payload;
+  const newTree = addNode(state.tree, parent, { name: itemKey, type });
   return { ...state, tree: newTree };
 };
 
@@ -105,7 +109,11 @@ const reduceLeft = (state) => {
 };
 
 const focus = createReducer(
-  { tree: createNode(null, "root"), activeItem: "root", activeDepth: 0 },
+  {
+    tree: createNode(null, { name: "root", type: TYPE_ROW }),
+    activeItem: "root",
+    activeDepth: 0,
+  },
   {
     [addFocusable]: reduceAddFocusable,
     [initFocusable]: reduceInitFocusable,
