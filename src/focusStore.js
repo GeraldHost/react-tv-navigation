@@ -54,18 +54,32 @@ const traverseTree = (tree, current, direction, type) => {
     ) {
       return node.children[0];
     }
+
     const currentIndex = node.children.findIndex(
       (child) => child.name === current && child.type === type
     );
-    const nextSiblingIncrement = direction === "forward" ? 1 : -1;
+
+    if (!~currentIndex) {
+      // if we can't find the current node in the children keep walking down
+      return node.children.reduce((acc, node) => acc || search(node), false);
+    }
+
+    const currentNode = node.children[currentIndex];
+
+    if (currentNode.type !== type) {
+      // TODO:
+      // The current node type does not match the provided type
+      // we need to walk back up to the parent an perform the move from there
+    }
+
+    // If there is valid sibling then return that node otherwise continue to
+    // walk down the children until we find the next node that is the same type
     const nextSibling =
-      !!~currentIndex && node.children[currentIndex + nextSiblingIncrement];
+      node.children[currentIndex + (direction === "forward" ? 1 : -1)];
     if (nextSibling && nextSibling.type === type) {
       return nextSibling;
-    } else if (!!~currentIndex) {
-      return node.children[currentIndex].children.find((c) => c.type === type);
     } else {
-      return node.children.reduce((_, node) => search(node), null);
+      return node.children[currentIndex].children.find((c) => c.type === type);
     }
   };
   return search(tree);
