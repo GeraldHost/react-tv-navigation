@@ -4,4 +4,5 @@ WIP for a declarative approach to TV navigation
 
 ## TODO:
 
-- convert focus data object to tree instead of array of depths
+- Refactor store code to remove duplication
+- Get up and left to work when inside nested component
