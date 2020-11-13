@@ -1,20 +1,23 @@
 import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { addFocusable, initFocusable } from "./focusStore";
+import { addFocusable } from "./focusStore";
 
 const FocusContext = React.createContext({});
 const useFocus = () => React.useContext(FocusContext);
 
-export const Focusable = ({ children, itemKey }) => {
+const useWillMount = (fn) => {
+  useMemo(() => fn(), []);
+};
+
+export const Focusable = ({ children, itemKey, type = "row" }) => {
   const { parent } = useFocus();
   const dispatch = useDispatch();
   const activeItem = useSelector((state) => state.activeItem);
 
-  // TODO: this will break in concurrent mode?
-  useMemo(() => {
-    dispatch(addFocusable({ parent, itemKey }));
-  }, [itemKey, parent, dispatch, addFocusable]);
+  useWillMount(() => {
+    dispatch(addFocusable({ parent, itemKey, type }));
+  });
 
   const isActive = activeItem === itemKey;
 
@@ -29,8 +32,8 @@ export const Focusable = ({ children, itemKey }) => {
 export const RootProvider = ({ children }) => {
   const firstActiveIndex = 0;
   return (
-    <FocusContext.Provider value={{ parent: "root" }}>
-      {children}
+    <FocusContext.Provider value={{ parent: null }}>
+      <Focusable itemKey="root">{children}</Focusable>
     </FocusContext.Provider>
   );
 };

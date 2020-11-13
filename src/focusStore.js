@@ -6,37 +6,90 @@ export const initFocusable = createAction("INIT");
 export const right = createAction("RIGHT");
 export const left = createAction("LEFT");
 
-const createNode = (name) => ({
+const createNode = (parent, name) => ({
   name,
-  children: []
-})
-
-const addNode = (tree, parent, nodeName) => {
-  const callback = (node) => { 
-    return { ...node, children: [...node.children, createNode(nodeName)] }
-  }
-  return walk(tree, parent, callback);
-}
+  parent,
+  children: [],
+});
 
 const walk = (tree, target, callback) => {
-  if(target === tree.name) {
+  if (tree.name === target) {
     return callback(tree);
   }
-  
-  const children = tree.children.map(node => {
-    if(node.name === target) {
+
+  const children = tree.children.map((node) => {
+    if (node.name === target) {
       return callback(node);
     }
     return walk(node, target, callback);
   });
   return { ...tree, children };
-}
+};
+
+const addNode = (tree, parent, nodeName) => {
+  const callback = (node) => {
+    const children = [...node.children, createNode(parent, nodeName)];
+    return { ...node, children };
+  };
+  return walk(tree, parent, callback);
+};
+
+const search = (tree, callback) => {
+  if (callback(tree)) {
+    return tree;
+  }
+  return tree.children.find((node) => search(node, callback));
+};
+
+const nextNode = (tree, current) => {
+  if (tree.parent === null && tree.name === current) { // <- diff
+    return tree.children[0];                           // <- | 
+  }                                                    // <- |
+  const search = (node) => {
+    // do this recurrsively
+    // find child index
+    const currentIndex = node.children.findIndex(
+      (child) => child.name === current
+    );
+    const nextSibling = !!~currentIndex && node.children[currentIndex + 1]
+    if (nextSibling) {
+      return nextSibling;
+    } else if (!!~currentIndex) {
+      return node.children[currentIndex].children[0];
+    } else {
+      return node.children.reduce((_, node) => search(node), null);
+    }
+  };
+  return search(tree);
+};
+
+const prevNode = (tree, current) => {
+  const search = (node) => {
+    // do this recurrsively
+    // find child index
+    const currentIndex = node.children.findIndex(
+      (child) => child.name === current
+    );
+    const prevSibling = !!~currentIndex && node.children[currentIndex - 1] // <- diff
+    if (prevSibling) {
+      return prevSibling;
+    } else if (!!~currentIndex) {
+      return node; // <- diff
+    } else {
+      return node.children.reduce((_, node) => search(node), null);
+    }
+  };
+  return search(tree);
+};
 
 const reduceAddFocusable = (state, action) => {
   const { parent, itemKey } = action.payload;
-  const newTree = addNode(state.tree, parent, itemKey);
-  console.log(itemKey);
-  return {...state, tree: newTree };
+  const newTree = addNode(
+    JSON.parse(JSON.stringify(state.tree)),
+    parent,
+    itemKey
+  );
+  return { ...state, tree: newTree };
 };
 
 const reduceInitFocusable = (state, action) => {
@@ -44,45 +97,18 @@ const reduceInitFocusable = (state, action) => {
 };
 
 const reduceRight = (state) => {
-  // // what is the next item?
-  // const depth = state.activeDepth;
-  // const i = state.activeItem;
-  // const layers = state.layers;
-
-  // // is there more items in this layer?
-  // const pos = layers[depth].indexOf(i) + 1;
-  // if (layers[depth].length > pos) {
-  //   return { ...state, activeItem: layers[depth][pos] };
-  // }
-
-  // const nextDepth = depth + 1;
-  // return { ...state, activeItem: layers[nextDepth][0], activeDepth: nextDepth };
+  const next = nextNode(state.tree, state.activeItem);
+  return { ...state, activeItem: next.name };
 };
 
 const reduceLeft = (state) => {
-  // // what is the next item?
-  // const depth = state.activeDepth;
-  // const i = state.activeItem;
-  // const layers = state.layers;
-
-  // // is there more items previously in this layer?
-  // const pos = layers[depth].indexOf(i);
-
-  // if (pos > 0) {
-  //   return { ...state, activeItem: layers[depth][pos - 1] };
-  // }
-
-  // const nextDepth = depth - 1;
-
-  // if (nextDepth < 0) {
-  //   return state;
-  // }
-
-  // return { ...state, activeItem: layers[nextDepth][0], activeDepth: nextDepth };
+  const next = prevNode(state.tree, state.activeItem);
+  console.log("left", next.name);
+  return { ...state, activeItem: next.name };
 };
 
 const focus = createReducer(
-  { tree: createNode("root"), activeItem: "root", activeDepth: 0 },
+  { tree: createNode(null, "root"), activeItem: "root", activeDepth: 0 },
   {
     [addFocusable]: reduceAddFocusable,
     [initFocusable]: reduceInitFocusable,
