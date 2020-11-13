@@ -40,13 +40,6 @@ const addNode = (tree, parent, { name, type }) => {
   return walk(tree, parent, callback);
 };
 
-const search = (tree, callback) => {
-  if (callback(tree)) {
-    return tree;
-  }
-  return tree.children.find((node) => search(node, callback));
-};
-
 /**
  * Get the next node in the tree
  * @param current {String} name of the current node
@@ -84,40 +77,9 @@ const reduceAddFocusable = (state, action) => {
   return { ...state, tree: newTree };
 };
 
-const reduceInitFocusable = (state, action) => {
-  return { ...state, activeNode: state.activeNode || action.payload };
-};
-
-const reduceRight = (state) => {
+const lrudHandler = (direction, type) => (state) => {
   const { tree, activeNode } = state;
-  const next = traverseTree(tree, activeNode, "forward", TYPE_COL);
-  if (!next?.name) {
-    return { ...state };
-  }
-  return { ...state, activeNode: next.name };
-};
-
-const reduceLeft = (state) => {
-  const { tree, activeNode } = state;
-  const next = traverseTree(tree, activeNode, "backward", TYPE_COL);
-  if (!next?.name) {
-    return { ...state };
-  }
-  return { ...state, activeNode: next.name };
-};
-
-const reduceDown = (state) => {
-  const { tree, activeNode } = state;
-  const next = traverseTree(tree, activeNode, "forward", TYPE_ROW);
-  if (!next?.name) {
-    return { ...state };
-  }
-  return { ...state, activeNode: next.name };
-};
-
-const reduceUp = (state) => {
-  const { tree, activeNode } = state;
-  const next = traverseTree(tree, activeNode, "backward", TYPE_ROW);
+  const next = traverseTree(tree, activeNode, direction, type);
   if (!next?.name) {
     return { ...state };
   }
@@ -131,11 +93,10 @@ const focus = createReducer(
   },
   {
     [addFocusable]: reduceAddFocusable,
-    [initFocusable]: reduceInitFocusable,
-    [right]: reduceRight,
-    [left]: reduceLeft,
-    [down]: reduceDown,
-    [up]: reduceUp,
+    [right]: lrudHandler("forward", TYPE_COL),
+    [left]: lrudHandler("backward", TYPE_COL),
+    [up]: lrudHandler("backward", TYPE_ROW),
+    [down]: lrudHandler("forward", TYPE_ROW),
   }
 );
 
