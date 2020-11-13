@@ -44,33 +44,49 @@ const addNode = (tree, parent, { name, type }) => {
  * Get the next node in the tree
  * @param current {String} name of the current node
  * @param direction {forward|backward} direction
+ * TODO: slice the tree when we get a new active item so we have the full tree
+ * but then possibly a smaller active tree. At the moment we have to walk the
+ * whole tree to find out the next node
  */
 const traverseTree = (tree, current, direction, type) => {
   const search = (node) => {
     if (
       direction === "forward" &&
       node.name === current &&
+      node.children[0] &&
       node.children[0].type === type
     ) {
       return node.children[0];
     }
 
+    if (type === "col" && node.type === "row" && node.children.length <= 0) {
+      // The current node type does not match the provided type
+      // we need to walk back up to the parent an perform the move from there
+      return traverseTree(tree, node.parent, direction, type);
+    }
+
     const currentIndex = node.children.findIndex(
       (child) => child.name === current && child.type === type
     );
+    const currentNode = node.children[currentIndex];
 
-    if (!~currentIndex) {
+    if (!currentNode) {
       // if we can't find the current node in the children keep walking down
       return node.children.reduce((acc, node) => acc || search(node), false);
     }
 
-    const currentNode = node.children[currentIndex];
-
-    if (currentNode.type !== type) {
-      // TODO:
-      // The current node type does not match the provided type
-      // we need to walk back up to the parent an perform the move from there
-    }
+    // if (
+    //   type === "col" &&
+    //   currentNode.type === "row" &&
+    //   (currentNode.children.length <= 0 ||
+    //     currentIndex === 0 ||
+    //     currentIndex === node.children.length - 1)
+    // ) {
+    //   // TODO:
+    //   // The current node type does not match the provided type
+    //   // we need to walk back up to the parent an perform the move from there
+    //   return search(tree, currentNode.parent, direction, type);
+    // }
 
     // If there is valid sibling then return that node otherwise continue to
     // walk down the children until we find the next node that is the same type
