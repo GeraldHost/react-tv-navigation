@@ -1,10 +1,10 @@
 class Shim {
   constructor() {
-    if(!Shim.instance){
-     this.shims = {};
-     Shim.instance = this;
+    if (!Shim.instance) {
+      this.shims = {};
+      Shim.instance = this;
     }
-   return Shim.instance;
+    return Shim.instance;
   }
   register(name, type, fn) {
     const currentShims = this.shims[name];
