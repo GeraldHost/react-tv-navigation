@@ -99,9 +99,8 @@ const reduceAddFocusable = (state, action) => {
 };
 
 const reduceRemoveFocusable = (state, action) => {
-  const { parent, ...newNode } = action.payload;
-  const newTree = addNode(state.tree, parent, newNode);
-  return { ...state, tree: newTree };
+  // TODO: implement
+  return state;
 };
 
 const lrudHandler = (direction, type) => (state) => {
