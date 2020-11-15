@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
 
-import { addFocusable, removeFocusable } from "./focusStore";
+import { addFocusable, removeFocusable, focus } from "./focusStore";
 import Shim from "./shim";
 
 const FocusContext = React.createContext({});
@@ -47,11 +47,21 @@ export const withFocus = (Component) => {
   );
 };
 
-const RootFocusable = withFocus((props) => <div {...props} />);
-export const RootProvider = ({ children, activeNode = "root" }) => (
-  <FocusContext.Provider value={{ parent: null }}>
-    <RootFocusable name="root" type="row">
-      {children}
-    </RootFocusable>
-  </FocusContext.Provider>
-);
+const RootFocusable = withFocus(({children}) => <div>{children}</div>);
+export const RootProvider = ({ children, initialFocusNode = "root" }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(initialFocusNode) {
+      dispatch(focus(initialFocusNode))
+    }
+  }, []);
+
+  return (
+    <FocusContext.Provider value={{ parent: null }}>
+      <RootFocusable name="root" type="row">
+        {children}
+      </RootFocusable>
+    </FocusContext.Provider>
+  )
+}

@@ -12,6 +12,8 @@ export const left = createAction("LEFT");
 export const down = createAction("DOWN");
 export const up = createAction("UP");
 
+export const focus = createAction("FOCUS");
+
 export const createNode = (parent, node) => ({
   ...node,
   parent,
@@ -92,6 +94,10 @@ const traverseTree = (tree, current, direction, type) => {
   return search(tree);
 };
 
+export const reduceFocus = (state, action) => {
+  return { ...state, activeNode: action.payload };
+}
+
 export const reduceAddFocusable = (state, action) => {
   const { parent, ...newNode } = action.payload;
   const newTree = addNode(state.tree, parent, newNode);
@@ -114,7 +120,7 @@ export const lrudHandler = (direction, type) => (state) => {
   return { ...state, activeNode: next.name };
 };
 
-const focus = createReducer(
+const focusReducer = createReducer(
   {
     tree: createNode(null, { name: "root", type: TYPE_ROW }),
     activeNode: "root",
@@ -126,9 +132,10 @@ const focus = createReducer(
     [left]: lrudHandler("backward", TYPE_COL),
     [up]: lrudHandler("backward", TYPE_ROW),
     [down]: lrudHandler("forward", TYPE_ROW),
+    [focus]: reduceFocus,
   }
 );
 
 export const store = configureStore({
-  reducer: focus,
+  reducer: focusReducer,
 });
