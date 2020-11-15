@@ -22,6 +22,13 @@ const mapStateToProps = (state, props) => ({
   active: state.activeNode === props.name,
 });
 
+// TODO: make some helpers like withFocus = (type) => ();
+// and then conditionally set the type e.g col or row. Then we would
+// use our hock like this withFocus("col")(() => {}); and could also
+// create a couple helpers like const withFocusCol = withFocus("col"); 
+// withFocusCol(() => {}); and the same for row. This feels like
+// it would be a nice api as the user has to be explicit with their
+// focus type rather than just having a default of "row"
 export const withFocus = (Component) => {
   return connect(mapStateToProps)(
     ({ active, name, type = "row", container, beforeActive, ...props }) => {
