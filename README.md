@@ -10,3 +10,7 @@ WIP for a declarative approach to TV navigation
 - Implement focus on hover to support pointer remotes
 - Register key press event listeners
 - more tests!
+
+## Bugs
+
+- When you trigger "down" on initial view it goes to the last node :/ 
