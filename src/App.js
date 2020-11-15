@@ -2,7 +2,7 @@ import React from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
 import { right, left, store, down, up } from "./focusStore";
-import { RootProvider, Focusable } from "./Focusable";
+import { RootProvider, withFocus } from "./Focusable";
 
 import "./App.css";
 
@@ -28,6 +28,10 @@ function Debug() {
 
 const beforeActive = (node) =>
   node.children.length > 0 ? node.children[0] : node;
+
+const Focusable = withFocus(({ active, type, ...props }) => (
+  <div className={`focusable ${active && "active"} ${type}`} {...props} />
+));
 
 function App() {
   return (

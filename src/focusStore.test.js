@@ -54,7 +54,7 @@ describe("@reducers", () => {
     const action = { type: "ADD_NODE", payload: createNode("root", node) };
     const resp = reduceAddFocusable(initialState, action);
     const expected = {
-      "activeNode": "root",
+      activeNode: "root",
       tree: {
         children: [
           {
@@ -85,7 +85,7 @@ describe("@reducers", () => {
         parent: null,
         children: [{ parent: "root", name: "node", type: "col", children: [] }],
       },
-      "activeNode": "node",
+      activeNode: "node",
     };
     expect(resp).toMatchObject(expected);
   });

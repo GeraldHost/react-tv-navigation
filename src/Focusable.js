@@ -19,38 +19,39 @@ const useUnmount = (fn) => {
 
 const mapStateToProps = (state, props) => ({
   ...props,
-  isActive: state.activeNode === props.name,
+  active: state.activeNode === props.name,
 });
 
-export const Focusable = connect(mapStateToProps)(
-  ({ isActive, children, name, type = "row", beforeActive }) => {
-    const { parent } = useFocus();
-    const dispatch = useDispatch();
+export const withFocus = (Component) => {
+  return connect(mapStateToProps)(
+    ({ active, name, type = "row", beforeActive, ...props }) => {
+      const { parent } = useFocus();
+      const dispatch = useDispatch();
 
-    useWillMount(() => {
-      Shim.register(name, "beforeActive", beforeActive);
-      dispatch(addFocusable({ parent, name, type }));
-    });
+      useWillMount(() => {
+        Shim.register(name, "beforeActive", beforeActive);
+        dispatch(addFocusable({ parent, name, type }));
+      });
 
-    useUnmount(() => {
-      Shim.unregister(name, "beforeActive");
-      dispatch(removeFocusable({ parent, name, type }));
-    });
+      useUnmount(() => {
+        Shim.unregister(name, "beforeActive");
+        dispatch(removeFocusable({ parent, name, type }));
+      });
 
-    return (
-      <FocusContext.Provider value={{ parent: name }}>
-        <div className={`focusable ${isActive && "active"} ${type}`}>
-          {children}
-        </div>
-      </FocusContext.Provider>
-    );
-  }
-);
+      return (
+        <FocusContext.Provider value={{ parent: name }}>
+          <Component active={active} type={type} {...props} />
+        </FocusContext.Provider>
+      );
+    }
+  );
+};
 
-export const RootProvider = ({ children }) => (
+const RootFocusable = withFocus((props) => <div {...props} />);
+export const RootProvider = ({ children, activeNode = "root" }) => (
   <FocusContext.Provider value={{ parent: null }}>
-    <Focusable name="root" type="row">
+    <RootFocusable name="root" type="row">
       {children}
-    </Focusable>
+    </RootFocusable>
   </FocusContext.Provider>
 );

@@ -12,7 +12,7 @@ export const left = createAction("LEFT");
 export const down = createAction("DOWN");
 export const up = createAction("UP");
 
-const createNode = (parent, node) => ({
+export const createNode = (parent, node) => ({
   ...node,
   parent,
   children: [],
@@ -92,18 +92,18 @@ const traverseTree = (tree, current, direction, type) => {
   return search(tree);
 };
 
-const reduceAddFocusable = (state, action) => {
+export const reduceAddFocusable = (state, action) => {
   const { parent, ...newNode } = action.payload;
   const newTree = addNode(state.tree, parent, newNode);
   return { ...state, tree: newTree };
 };
 
-const reduceRemoveFocusable = (state, action) => {
+export const reduceRemoveFocusable = (state, action) => {
   // TODO: implement
   return state;
 };
 
-const lrudHandler = (direction, type) => (state) => {
+export const lrudHandler = (direction, type) => (state) => {
   const { tree, activeNode } = state;
   let maybeNext = traverseTree(tree, activeNode, direction, type);
   if (!maybeNext?.name) {
