@@ -1,19 +1,19 @@
 import { createAction, createReducer, configureStore } from "@reduxjs/toolkit";
+import Shim from "./shim";
 
 const TYPE_ROW = "row";
 const TYPE_COL = "col";
 
-export const addFocusable = createAction("ADD_LAYER");
-export const initFocusable = createAction("INIT");
+export const removeFocusable = createAction("REMOVE_NODE");
+export const addFocusable = createAction("ADD_NODE");
 
 export const right = createAction("RIGHT");
 export const left = createAction("LEFT");
 export const down = createAction("DOWN");
 export const up = createAction("UP");
 
-const createNode = (parent, { name, type }) => ({
-  name,
-  type,
+const createNode = (parent, node) => ({
+  ...node,
   parent,
   children: [],
 });
@@ -32,9 +32,9 @@ const walk = (tree, target, callback) => {
   return { ...tree, children };
 };
 
-const addNode = (tree, parent, { name, type }) => {
+const addNode = (tree, parent, newNode) => {
   const callback = (node) => {
-    const children = [...node.children, createNode(parent, { name, type })];
+    const children = [...node.children, createNode(parent, newNode)];
     return { ...node, children };
   };
   return walk(tree, parent, callback);
@@ -47,6 +47,7 @@ const addNode = (tree, parent, { name, type }) => {
  * TODO: slice the tree when we get a new active item so we have the full tree
  * but then possibly a smaller active tree. At the moment we have to walk the
  * whole tree to find out the next node
+ * TODO: convert this recursion for while loop. It will be more performant
  */
 const traverseTree = (tree, current, direction, type) => {
   const search = (node) => {
@@ -59,7 +60,10 @@ const traverseTree = (tree, current, direction, type) => {
       return node.children[0];
     }
 
-    if (type === "col" && node.type === "row" && node.children.length <= 0) {
+    if (
+      (type === "col" && node.type === "row" && node.children.length <= 0) ||
+      (type === "row" && node.type === "col" && node.children.length <= 0)
+    ) {
       // The current node type does not match the provided type
       // we need to walk back up to the parent an perform the move from there
       return traverseTree(tree, node.parent, direction, type);
@@ -75,19 +79,6 @@ const traverseTree = (tree, current, direction, type) => {
       return node.children.reduce((acc, node) => acc || search(node), false);
     }
 
-    // if (
-    //   type === "col" &&
-    //   currentNode.type === "row" &&
-    //   (currentNode.children.length <= 0 ||
-    //     currentIndex === 0 ||
-    //     currentIndex === node.children.length - 1)
-    // ) {
-    //   // TODO:
-    //   // The current node type does not match the provided type
-    //   // we need to walk back up to the parent an perform the move from there
-    //   return search(tree, currentNode.parent, direction, type);
-    // }
-
     // If there is valid sibling then return that node otherwise continue to
     // walk down the children until we find the next node that is the same type
     const nextSibling =
@@ -102,17 +93,25 @@ const traverseTree = (tree, current, direction, type) => {
 };
 
 const reduceAddFocusable = (state, action) => {
-  const { parent, name, type } = action.payload;
-  const newTree = addNode(state.tree, parent, { name, type });
+  const { parent, ...newNode } = action.payload;
+  const newTree = addNode(state.tree, parent, newNode);
+  return { ...state, tree: newTree };
+};
+
+const reduceRemoveFocusable = (state, action) => {
+  const { parent, ...newNode } = action.payload;
+  const newTree = addNode(state.tree, parent, newNode);
   return { ...state, tree: newTree };
 };
 
 const lrudHandler = (direction, type) => (state) => {
   const { tree, activeNode } = state;
-  const next = traverseTree(tree, activeNode, direction, type);
-  if (!next?.name) {
+  let maybeNext = traverseTree(tree, activeNode, direction, type);
+  if (!maybeNext?.name) {
     return { ...state };
   }
+
+  const next = Shim.run(maybeNext, "beforeActive");
   return { ...state, activeNode: next.name };
 };
 
@@ -123,6 +122,7 @@ const focus = createReducer(
   },
   {
     [addFocusable]: reduceAddFocusable,
+    [removeFocusable]: reduceRemoveFocusable,
     [right]: lrudHandler("forward", TYPE_COL),
     [left]: lrudHandler("backward", TYPE_COL),
     [up]: lrudHandler("backward", TYPE_ROW),

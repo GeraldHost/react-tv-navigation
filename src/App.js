@@ -7,7 +7,7 @@ import { RootProvider, Focusable } from "./Focusable";
 import "./App.css";
 
 function Debug() {
-  //const state = useSelector((s) => s);
+  const state = useSelector((s) => s);
   const dispatch = useDispatch();
 
   const handleRight = () => void dispatch(right());
@@ -15,26 +15,31 @@ function Debug() {
   const handleDown = () => void dispatch(down());
   const handleUp = () => void dispatch(up());
 
-  // <pre>{JSON.stringify(state, null, 2)}</pre>
   return (
     <>
       <button onClick={handleLeft}>left</button>
       <button onClick={handleRight}>right</button>
       <button onClick={handleDown}>down</button>
       <button onClick={handleUp}>up</button>
+      <pre>{JSON.stringify(state, null, 2)}</pre>
     </>
   );
 }
+
+const beforeActive = (node) =>
+  node.children.length > 0 ? node.children[0] : node;
 
 function App() {
   return (
     <Provider store={store}>
       <RootProvider>
-        <Focusable name="node-a" type="col">
-          <Focusable name="node-a-1" type="row"></Focusable>
-          <Focusable name="node-a-2" type="row"></Focusable>
+        <Focusable name="node" beforeActive={beforeActive} type="col">
+          <Focusable name="node-a" type="row" beforeActive={beforeActive}>
+            <Focusable name="node-a-1" type="col" />
+            <Focusable name="node-a-2" type="col" />
+          </Focusable>
+          <Focusable name="node-b" type="row"></Focusable>
         </Focusable>
-        <Focusable name="node-b-1" type="col"></Focusable>
       </RootProvider>
       <Debug />
     </Provider>
