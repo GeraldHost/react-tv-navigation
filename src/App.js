@@ -36,9 +36,9 @@ const Focusable = withFocus(({ active, type, ...props }) => (
 function App() {
   return (
     <Provider store={store}>
-      <RootProvider initialFocusNode="node-a-1">
-        <Focusable name="node" beforeActive={beforeActive} type="col">
-          <Focusable name="node-a" type="row" beforeActive={beforeActive}>
+      <RootProvider initialFocusNode="root">
+        <Focusable name="node" container type="col">
+          <Focusable name="node-a" type="row" container>
             <Focusable name="node-a-1" type="col" />
             <Focusable name="node-a-2" type="col" />
           </Focusable>

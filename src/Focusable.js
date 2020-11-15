@@ -24,13 +24,13 @@ const mapStateToProps = (state, props) => ({
 
 export const withFocus = (Component) => {
   return connect(mapStateToProps)(
-    ({ active, name, type = "row", beforeActive, ...props }) => {
+    ({ active, name, type = "row", container, beforeActive, ...props }) => {
       const { parent } = useFocus();
       const dispatch = useDispatch();
 
       useWillMount(() => {
         Shim.register(name, "beforeActive", beforeActive);
-        dispatch(addFocusable({ parent, name, type }));
+        dispatch(addFocusable({ parent, name, type, container }));
       });
 
       useUnmount(() => {

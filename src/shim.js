@@ -17,10 +17,10 @@ class Shim {
       this.shims[name][type] = undefined;
     }
   }
-  run(_node, type) {
+  run(_node, type, ...args) {
     let node = _node;
     while (this.shims[node.name]?.[type]) {
-      node = this.shims[node.name][type](node);
+      node = this.shims[node.name][type](node, ...args);
     }
     return node;
   }

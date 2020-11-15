@@ -54,15 +54,6 @@ const addNode = (tree, parent, newNode) => {
 const traverseTree = (tree, current, direction, type) => {
   const search = (node) => {
     if (
-      direction === "forward" &&
-      node.name === current &&
-      node.children[0] &&
-      node.children[0].type === type
-    ) {
-      return node.children[0];
-    }
-
-    if (
       (type === "col" && node.type === "row" && node.children.length <= 0) ||
       (type === "row" && node.type === "col" && node.children.length <= 0)
     ) {
@@ -71,12 +62,20 @@ const traverseTree = (tree, current, direction, type) => {
       return traverseTree(tree, node.parent, direction, type);
     }
 
+    if (
+      direction === "forward" &&
+      node.name === current &&
+      node.children[0] &&
+      node.children[0].type === type
+    ) {
+      return node.children[0];
+    }
+
     const currentIndex = node.children.findIndex(
       (child) => child.name === current && child.type === type
     );
-    const currentNode = node.children[currentIndex];
 
-    if (!currentNode) {
+    if (!node.children[currentIndex]) {
       // if we can't find the current node in the children keep walking down
       return node.children.reduce((acc, node) => acc || search(node), false);
     }
@@ -115,8 +114,20 @@ export const lrudHandler = (direction, type) => (state) => {
   if (!maybeNext?.name) {
     return { ...state };
   }
+  
+  // default behaviour for container nodes is for their first child 
+  // to recieve focus. We also take a refrence to the parent to pass it
+  // into the shimmed functions
+  let parent;
+  while(maybeNext?.container) {
+    parent = maybeNext;
+    maybeNext = maybeNext.children[0];
+  }
 
-  const next = Shim.run(maybeNext, "beforeActive");
+  // run all of the shims which will get passed the maybe next node
+  // and if we are dealing with container nodes the parent will also
+  // get passed in
+  const next = Shim.run(maybeNext, "beforeActive", parent);
   return { ...state, activeNode: next.name };
 };
 
