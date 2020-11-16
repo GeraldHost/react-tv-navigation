@@ -16,8 +16,10 @@
   width: 100px;
   height: 100px;
   margin: 20px;
+  transition: transform 200ms;
 }
 
 .item.active {
   background-color: black;
+  transform: scale(1.1);
 }
