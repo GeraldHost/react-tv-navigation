@@ -50,6 +50,33 @@ const addNode = (tree, parent, newNode) => {
  * but then possibly a smaller active tree. At the moment we have to walk the
  * whole tree to find out the next node
  * TODO: convert this recursion for while loop. It will be more performant
+ * Something like this:
+
+  const tree = {
+    name: "root",
+    children: [{name: "foo"}, {name: "bar"}],
+  };
+
+  const current = "foo";
+  const stack = [tree];
+
+  let node = false;
+  let parent = false;
+
+  while(stack.length > 0 && !node) {
+    const node = stack.pop();
+    if(node.name === current) {
+      found = node;
+    }
+    if(node.children) {
+      for (const child of node.children) {
+        stack.push({ ...child, parent: node });
+      }
+    }
+  }
+
+  console.log(found);
+ 
  */
 const traverseTree = (tree, current, direction, type) => {
   const search = (node) => {
