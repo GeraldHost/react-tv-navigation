@@ -1,7 +1,15 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
 
-import { addFocusable, removeFocusable, focus } from "./focusStore";
+import {
+  addFocusable,
+  removeFocusable,
+  focus,
+  left,
+  right,
+  up,
+  down,
+} from "./focusStore";
 import Shim from "./shim";
 
 const FocusContext = React.createContext({});
@@ -22,16 +30,9 @@ const mapStateToProps = (state, props) => ({
   active: state.activeNode === props.name,
 });
 
-// TODO: make some helpers like withFocus = (type) => ();
-// and then conditionally set the type e.g col or row. Then we would
-// use our hock like this withFocus("col")(() => {}); and could also
-// create a couple helpers like const withFocusCol = withFocus("col"); 
-// withFocusCol(() => {}); and the same for row. This feels like
-// it would be a nice api as the user has to be explicit with their
-// focus type rather than just having a default of "row"
-export const withFocus = (Component) => {
+export const withFocus = (type) => (Component) => {
   return connect(mapStateToProps)(
-    ({ active, name, type = "row", container, beforeActive, ...props }) => {
+    ({ active, name, container, beforeActive, ...props }) => {
       const { parent } = useFocus();
       const dispatch = useDispatch();
 
@@ -54,14 +55,36 @@ export const withFocus = (Component) => {
   );
 };
 
-const RootFocusable = withFocus(({children}) => <div>{children}</div>);
+export const withFocusCol = withFocus("col");
+export const withFocusRow = withFocus("row");
+
+const RootFocusable = withFocusRow(({ children }) => <div>{children}</div>);
 export const RootProvider = ({ children, initialFocusNode = "root" }) => {
   const dispatch = useDispatch();
 
+  const handleRight = () => void dispatch(right());
+  const handleLeft = () => void dispatch(left());
+  const handleDown = () => void dispatch(down());
+  const handleUp = () => void dispatch(up());
+
+  const handleKeyPress = useCallback(
+    (event) => {
+      const fn = {
+        38: handleUp,
+        37: handleLeft,
+        39: handleRight,
+        40: handleDown,
+      }[event.keyCode];
+      fn && fn();
+      event.stopPropagation();
+    },
+    [handleUp, handleLeft, handleRight, handleDown]
+  );
+
   useEffect(() => {
-    if(initialFocusNode) {
-      dispatch(focus(initialFocusNode))
-    }
+    initialFocusNode && dispatch(focus(initialFocusNode));
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
   }, []);
 
   return (
@@ -70,5 +93,6 @@ export const RootProvider = ({ children, initialFocusNode = "root" }) => {
         {children}
       </RootFocusable>
     </FocusContext.Provider>
-  )
-}
+  );
+};
+
