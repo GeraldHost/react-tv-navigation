@@ -14,7 +14,7 @@ const FocusableCol = focusedCol((props) => <div {...props} />);
 function App() {
   return (
     <Provider store={store}>
-      <RootFocusRow initialFocusNode="root">
+      <RootFocusRow initialFocusNode="node-a-1">
         <FocusableCol name="node" container>
 
           <FocusableRow name="node-a" container>
