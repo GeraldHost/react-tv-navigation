@@ -10,6 +10,7 @@ WIP for a declarative approach to TV navigation
 - Implement focus on hover to support pointer remotes
 - Register key press event listeners
 - more tests!
+- Write a babel plugin to do the focus names? rather than making the user set them as a prop?
 
 ## Bugs
 

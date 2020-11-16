@@ -59,6 +59,8 @@ const traverseTree = (tree, current, direction, type) => {
     ) {
       // The current node type does not match the provided type
       // we need to walk back up to the parent an perform the move from there
+      // TODO: rather than traverse the whole tree again is it possible to implement
+      // traverseSlice?
       return traverseTree(tree, node.parent, direction, type);
     }
 
