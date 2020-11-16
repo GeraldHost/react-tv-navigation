@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
+import cn from "classnames";
 
 import {
   addFocusable,
@@ -30,7 +31,7 @@ const mapStateToProps = (state, props) => ({
   active: state.activeNode === props.name,
 });
 
-export const withFocus = (type) => (Component) => {
+export const focused = (type) => (Component) => {
   return connect(mapStateToProps)(
     ({ active, name, container, beforeActive, ...props }) => {
       const { parent } = useFocus();
@@ -48,18 +49,18 @@ export const withFocus = (type) => (Component) => {
 
       return (
         <FocusContext.Provider value={{ parent: name }}>
-          <Component active={active} type={type} {...props} />
+            <Component className={cn("focusable", type)} active={active} type={type} {...props} />
         </FocusContext.Provider>
       );
     }
   );
 };
 
-export const withFocusCol = withFocus("col");
-export const withFocusRow = withFocus("row");
+export const focusedCol = focused("col");
+export const focusedRow = focused("row");
 
-const RootFocusable = withFocusRow(({ children }) => <div>{children}</div>);
-export const RootProvider = ({ children, initialFocusNode = "root" }) => {
+const Root = focusedRow((props) => <div {...props} />);
+export const RootFocusRow = ({ children, initialFocusNode = "root" }) => {
   const dispatch = useDispatch();
 
   const handleRight = () => void dispatch(right());
@@ -89,10 +90,9 @@ export const RootProvider = ({ children, initialFocusNode = "root" }) => {
 
   return (
     <FocusContext.Provider value={{ parent: null }}>
-      <RootFocusable name="root" type="row">
+      <Root name="root" type="row">
         {children}
-      </RootFocusable>
+      </Root>
     </FocusContext.Provider>
   );
 };
-

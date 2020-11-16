@@ -1,23 +1,23 @@
 .focusable {
   display: flex;
-  margin: 6px;
   flex: 1;
-  padding: 6px;
-  border: dashed 2px blue;
-}
-
-.focusable.active {
-  border: 2px black solid !important;
-  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .focusable.col {
   flex-direction: column;
-  background-color: lightblue;
 }
 
 .focusable.row {
   flex-direction: row;
-  background-color: lightyellow;
 }
 
+.item {
+  border: dashed 2px black;
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+}
+
+.item.active {
+  background-color: black;
+}

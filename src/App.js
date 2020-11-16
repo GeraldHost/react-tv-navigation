@@ -1,51 +1,38 @@
 import React from "react";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 
-import { right, left, store, down, up } from "./focusStore";
-import { RootProvider, withFocus } from "./Focusable";
+import { store } from "./focusStore";
+import { Col, Row } from "./components";
+import { RootFocusRow, focusedCol, focusedRow } from "./Focusable";
 
 import "./App.css";
 
-function Debug() {
-  const state = useSelector((s) => s);
-  const dispatch = useDispatch();
-
-  const handleRight = () => void dispatch(right());
-  const handleLeft = () => void dispatch(left());
-  const handleDown = () => void dispatch(down());
-  const handleUp = () => void dispatch(up());
-
-  return (
-    <>
-      <button onClick={handleLeft}>left</button>
-      <button onClick={handleRight}>right</button>
-      <button onClick={handleDown}>down</button>
-      <button onClick={handleUp}>up</button>
-      <pre>{JSON.stringify(state, null, 2)}</pre>
-    </>
-  );
-}
-
-const beforeActive = (node) =>
-  node.children.length > 0 ? node.children[0] : node;
-
-const Focusable = withFocus(({ active, type, ...props }) => (
-  <div className={`focusable ${active && "active"} ${type}`} {...props} />
-));
+const FocusableItem = focusedCol(Col);
+const FocusableRow = focusedRow(Row);
+const FocusableCol = focusedCol((props) => <div {...props} />);
 
 function App() {
   return (
     <Provider store={store}>
-      <RootProvider initialFocusNode="root">
-        <Focusable name="node" container type="col">
-          <Focusable name="node-a" type="row" container>
-            <Focusable name="node-a-1" type="col" />
-            <Focusable name="node-a-2" type="col" />
-          </Focusable>
-          <Focusable name="node-b" type="row"></Focusable>
-        </Focusable>
-      </RootProvider>
-      <Debug />
+      <RootFocusRow initialFocusNode="root">
+        <FocusableCol name="node" container>
+
+          <FocusableRow name="node-a" container>
+            <FocusableItem name="node-a-1" />
+            <FocusableItem name="node-a-2" />
+            <FocusableItem name="node-a-3" />
+            <FocusableItem name="node-a-4" />
+          </FocusableRow>
+
+          <FocusableRow name="node-b" container>
+            <FocusableItem name="node-b-1" />
+            <FocusableItem name="node-b-2" />
+            <FocusableItem name="node-b-3" />
+            <FocusableItem name="node-b-4" />
+          </FocusableRow>
+
+        </FocusableCol>
+      </RootFocusRow>
     </Provider>
   );
 }
