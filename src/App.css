@@ -1,14 +1,31 @@
-.focusable {
-  display: flex;
-  flex: 1;
+body {
+  margin: 0;
+  padding: 0;
 }
 
-.focusable.col {
-  flex-direction: column;
+* {
+  box-sizing: border-box;
 }
 
-.focusable.row {
-  flex-direction: row;
+.root-container {
+  height: 100vh;
+}
+
+.row-container {
+  flex-grow: 0 !important;
+}
+
+.nav {
+  max-width: 240px;
+}
+
+.nav-item {
+  border: 2px solid blue;
+  margin: 20px;
+}
+
+.nav-item.active {
+  background-color: blue;
 }
 
 .item {
@@ -22,4 +39,19 @@
 .item.active {
   background-color: black;
   transform: scale(1.1);
+}
+
+/* required */
+
+.focusable {
+  display: flex;
+  flex: 1;
+}
+
+.focusable.col {
+  flex-direction: column;
+}
+
+.focusable.row {
+  flex-direction: row;
 }

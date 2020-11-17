@@ -33,7 +33,7 @@ const mapStateToProps = (state, props) => ({
 
 export const focused = (type) => (Component) => {
   return connect(mapStateToProps)(
-    ({ active, name, container, beforeActive, ...props }) => {
+    ({ active, name, container, className, beforeActive, ...props }) => {
       const { parent } = useFocus();
       const dispatch = useDispatch();
 
@@ -49,7 +49,12 @@ export const focused = (type) => (Component) => {
 
       return (
         <FocusContext.Provider value={{ parent: name }}>
-            <Component className={cn("focusable", type)} active={active} type={type} {...props} />
+          <Component
+            className={cn("focusable", type, className)}
+            active={active}
+            type={type}
+            {...props}
+          />
         </FocusContext.Provider>
       );
     }
@@ -60,7 +65,11 @@ export const focusedCol = focused("col");
 export const focusedRow = focused("row");
 
 const Root = focusedRow((props) => <div {...props} />);
-export const RootFocusRow = ({ children, initialFocusNode = "root" }) => {
+export const RootFocusRow = ({
+  children,
+  className,
+  initialFocusNode = "root",
+}) => {
   const dispatch = useDispatch();
 
   const handleRight = () => void dispatch(right());
@@ -90,7 +99,7 @@ export const RootFocusRow = ({ children, initialFocusNode = "root" }) => {
 
   return (
     <FocusContext.Provider value={{ parent: null }}>
-      <Root name="root" type="row">
+      <Root name="root" className={className}>
         {children}
       </Root>
     </FocusContext.Provider>
