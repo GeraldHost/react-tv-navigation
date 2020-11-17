@@ -49,24 +49,14 @@ const addNode = (tree, parent, newNode) => {
  * TODO: slice the tree when we get a new active item so we have the full tree
  * but then possibly a smaller active tree. At the moment we have to walk the
  * whole tree to find out the next node
- * TODO: convert this recursion for while loop. It will be more performant
- * Something like this:
-
-  const tree = {
-    name: "root",
-    children: [{name: "foo"}, {name: "bar"}],
-  };
-
-  const current = "foo";
+ */
+const traverseTree = (tree, current, direction, type) => {
   const stack = [tree];
-
-  let node = false;
-  let parent = false;
-
-  while(stack.length > 0 && !node) {
+  let currentNode = false;
+  while(stack.length > 0 && !currentNode) {
     const node = stack.pop();
     if(node.name === current) {
-      found = node;
+      currentNode = node;
     }
     if(node.children) {
       for (const child of node.children) {
@@ -75,51 +65,28 @@ const addNode = (tree, parent, newNode) => {
     }
   }
 
-  console.log(found);
- 
- */
-const traverseTree = (tree, current, direction, type) => {
-  const search = (node) => {
-    if (
-      (type === "col" && node.type === "row" && node.children.length <= 0) ||
-      (type === "row" && node.type === "col" && node.children.length <= 0)
+  if (
+      (type === "col" && currentNode.type === "row" && currentNode.children.length <= 0) ||
+      (type === "row" && currentNode.type === "col" && currentNode.children.length <= 0)
     ) {
-      // The current node type does not match the provided type
-      // we need to walk back up to the parent an perform the move from there
-      // TODO: rather than traverse the whole tree again is it possible to implement
-      // traverseSlice?
-      return traverseTree(tree, node.parent, direction, type);
-    }
+    // The current node type does not match the provided type
+    // we need to walk back up to the parent an perform the move from there
+    // TODO: rather than traverse the whole tree again is it possible to implement
+    // traverseSlice?
+    return traverseTree(tree, currentNode.parent.name, direction, type);
+  }
 
-    if (
-      direction === "forward" &&
-      node.name === current &&
-      node.children[0] &&
-      node.children[0].type === type
-    ) {
+  const getNextNode = (node) => {
+    const currentIndex = node.parent.children.findIndex(c => c.name === node.name);
+    const nextSiblingIndex = currentIndex + (direction === "forward" ? 1 : -1);
+    if(node.parent.children[nextSiblingIndex]) {
+      return node.parent.children[nextSiblingIndex];
+    } else {
       return node.children[0];
     }
+  }
 
-    const currentIndex = node.children.findIndex(
-      (child) => child.name === current && child.type === type
-    );
-
-    if (!node.children[currentIndex]) {
-      // if we can't find the current node in the children keep walking down
-      return node.children.reduce((acc, node) => acc || search(node), false);
-    }
-
-    // If there is valid sibling then return that node otherwise continue to
-    // walk down the children until we find the next node that is the same type
-    const nextSibling =
-      node.children[currentIndex + (direction === "forward" ? 1 : -1)];
-    if (nextSibling && nextSibling.type === type) {
-      return nextSibling;
-    } else {
-      return node.children[currentIndex].children.find((c) => c.type === type);
-    }
-  };
-  return search(tree);
+  return getNextNode(currentNode);
 };
 
 export const reduceFocus = (state, action) => {
