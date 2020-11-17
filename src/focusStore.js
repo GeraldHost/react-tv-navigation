@@ -53,37 +53,39 @@ const addNode = (tree, parent, newNode) => {
 const traverseTree = (tree, current, direction, type) => {
   const stack = [tree];
   let currentNode = false;
-  while(stack.length > 0 && !currentNode) {
+  while (stack.length > 0 && !currentNode) {
     const node = stack.pop();
-    if(node.name === current) {
+    if (node.name === current) {
       currentNode = node;
     }
-    if(node.children) {
+    if (node.children) {
       for (const child of node.children) {
         stack.push({ ...child, parent: node });
       }
     }
   }
 
-  if (
-      (type === "col" && currentNode.type === "row" && currentNode.children.length <= 0) ||
-      (type === "row" && currentNode.type === "col" && currentNode.children.length <= 0)
-    ) {
-    // The current node type does not match the provided type
-    // we need to walk back up to the parent an perform the move from there
-    // TODO: rather than traverse the whole tree again is it possible to implement
-    // traverseSlice?
-    return traverseTree(tree, currentNode.parent.name, direction, type);
-  }
-
   const getNextNode = (node) => {
-    const currentIndex = node.parent.children.findIndex(c => c.name === node.name);
+    const currentIndex = node.parent.children.findIndex(
+      (c) => c.name === node.name
+    );
     const nextSiblingIndex = currentIndex + (direction === "forward" ? 1 : -1);
-    if(node.parent.children[nextSiblingIndex]) {
-      return node.parent.children[nextSiblingIndex];
-    } else {
-      return node.children[0];
-    }
+    const next = node.parent.children[nextSiblingIndex]
+      ? node.parent.children[nextSiblingIndex]
+      : node.children[0];
+
+    return next;
+  };
+
+  if (
+    (type === "col" &&
+      currentNode.type === "row" &&
+      currentNode.children.length <= 0) ||
+    (type === "row" &&
+      currentNode.type === "col" &&
+      currentNode.children.length <= 0)
+  ) {
+    return getNextNode(currentNode.parent);
   }
 
   return getNextNode(currentNode);
@@ -91,7 +93,7 @@ const traverseTree = (tree, current, direction, type) => {
 
 export const reduceFocus = (state, action) => {
   return { ...state, activeNode: action.payload };
-}
+};
 
 export const reduceAddFocusable = (state, action) => {
   const { parent, ...newNode } = action.payload;
@@ -110,12 +112,12 @@ export const lrudHandler = (direction, type) => (state) => {
   if (!maybeNext?.name) {
     return { ...state };
   }
-  
-  // default behaviour for container nodes is for their first child 
+
+  // default behaviour for container nodes is for their first child
   // to recieve focus. We also take a refrence to the parent to pass it
   // into the shimmed functions
   let parent;
-  while(maybeNext?.container) {
+  while (maybeNext?.container) {
     parent = maybeNext;
     maybeNext = maybeNext.children[0];
   }
