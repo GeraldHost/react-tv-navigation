@@ -69,31 +69,26 @@ const getNode = (tree, name) => {
  */
 const nextNode = (tree, name, direction, type) => {
   const isForward = direction === "forward";
+  const isBackward = direction === "backward";
+
   const currentNode = getNode(tree, name);
 
   const getNextNode = (node) => {
     const currentIndex = node.parent.children.findIndex(
-      (c) => c.name === node.name
+      (c) => c.name === node.name && c.type === type
     );
     const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
     const next = node.parent.children[nextSiblingIndex];
 
     if (!next) {
       // handle going next
-      debugger;
+      return nextNode(node.parent, node.parent.name, direction, type);
     }
 
     return next;
   };
 
-  if (
-    (type === "col" &&
-      currentNode.type === "row" &&
-      currentNode.children.length <= 0) ||
-    (type === "row" &&
-      currentNode.type === "col" &&
-      currentNode.children.length <= 0)
-  ) {
+  if (type !== currentNode.type && currentNode.children.length <= 0) {
     return getNextNode(currentNode.parent);
   }
 

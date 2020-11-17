@@ -12,12 +12,12 @@ const FocusableRow = focusedRow(Row);
 const FocusableCol = focusedCol((props) => <div {...props} />);
 
 const FocusableNav = focusedCol(Nav);
-const FocusableNavItem = focusedCol(Nav.Item);
+const FocusableNavItem = focusedRow(Nav.Item);
 
 function App() {
   return (
     <Provider store={store}>
-      <RootFocusRow className="root-container" initialFocusNode="node-a">
+      <RootFocusRow className="root-container" initialFocusNode="nav">
         <FocusableNav name="nav" container>
           <FocusableNavItem name="nav-item-a" />
           <FocusableNavItem name="nav-item-b" />
