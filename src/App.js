@@ -17,8 +17,8 @@ const FocusableNavItem = focusedCol(Nav.Item);
 function App() {
   return (
     <Provider store={store}>
-      <RootFocusRow className="root-container" initialFocusNode="node-a-1">
-        <FocusableNav name="nav">
+      <RootFocusRow className="root-container" initialFocusNode="node-a">
+        <FocusableNav name="nav" container>
           <FocusableNavItem name="nav-item-a" />
           <FocusableNavItem name="nav-item-b" />
           <FocusableNavItem name="nav-item-c" />

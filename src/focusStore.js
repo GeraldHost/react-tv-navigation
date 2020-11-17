@@ -42,20 +42,12 @@ const addNode = (tree, parent, newNode) => {
   return walk(tree, parent, callback);
 };
 
-/**
- * Get the next node in the tree
- * @param current {String} name of the current node
- * @param direction {forward|backward} direction
- * TODO: slice the tree when we get a new active item so we have the full tree
- * but then possibly a smaller active tree. At the moment we have to walk the
- * whole tree to find out the next node
- */
-const traverseTree = (tree, current, direction, type) => {
+const getNode = (tree, name) => {
   const stack = [tree];
   let currentNode = false;
   while (stack.length > 0 && !currentNode) {
     const node = stack.pop();
-    if (node.name === current) {
+    if (node.name === name) {
       currentNode = node;
     }
     if (node.children) {
@@ -64,15 +56,32 @@ const traverseTree = (tree, current, direction, type) => {
       }
     }
   }
+  return currentNode;
+};
+
+/**
+ * Get the next node in the tree
+ * @param name {String} name of the current node
+ * @param direction {forward|backward} direction
+ * TODO: slice the tree when we get a new active item so we have the full tree
+ * but then possibly a smaller active tree. At the moment we have to walk the
+ * whole tree to find out the next node
+ */
+const nextNode = (tree, name, direction, type) => {
+  const isForward = direction === "forward";
+  const currentNode = getNode(tree, name);
 
   const getNextNode = (node) => {
     const currentIndex = node.parent.children.findIndex(
       (c) => c.name === node.name
     );
-    const nextSiblingIndex = currentIndex + (direction === "forward" ? 1 : -1);
-    const next = node.parent.children[nextSiblingIndex]
-      ? node.parent.children[nextSiblingIndex]
-      : node.children[0];
+    const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
+    const next = node.parent.children[nextSiblingIndex];
+
+    if (!next) {
+      // handle going next
+      debugger;
+    }
 
     return next;
   };
@@ -92,7 +101,10 @@ const traverseTree = (tree, current, direction, type) => {
 };
 
 export const reduceFocus = (state, action) => {
-  return { ...state, activeNode: action.payload };
+  const name = action.payload;
+  const node = getNode(state.tree, name);
+  const activeNode = beforeFocus(node);
+  return { ...state, activeNode: activeNode.name };
 };
 
 export const reduceAddFocusable = (state, action) => {
@@ -106,26 +118,27 @@ export const reduceRemoveFocusable = (state, action) => {
   return state;
 };
 
-export const lrudHandler = (direction, type) => (state) => {
-  const { tree, activeNode } = state;
-  let maybeNext = traverseTree(tree, activeNode, direction, type);
-  if (!maybeNext?.name) {
-    return { ...state };
-  }
-
+const beforeFocus = (node) => {
   // default behaviour for container nodes is for their first child
   // to recieve focus. We also take a refrence to the parent to pass it
   // into the shimmed functions
-  let parent;
-  while (maybeNext?.container) {
-    parent = maybeNext;
-    maybeNext = maybeNext.children[0];
+  while (node?.container && node.children[0]) {
+    node = node.children[0];
   }
 
   // run all of the shims which will get passed the maybe next node
   // and if we are dealing with container nodes the parent will also
   // get passed in
-  const next = Shim.run(maybeNext, "beforeActive", parent);
+  return Shim.run(node, "beforeActive");
+};
+
+export const lrudHandler = (direction, type) => (state) => {
+  const { tree, activeNode } = state;
+  let maybeNext = nextNode(tree, activeNode, direction, type);
+  if (!maybeNext?.name) {
+    return { ...state };
+  }
+  const next = beforeFocus(maybeNext);
   return { ...state, activeNode: next.name };
 };
 
