@@ -6,6 +6,25 @@ The navigation system is based on the idea of a grid. Inspired by [this post](ht
 
 ![tv-navigation-preview](https://i.imgur.com/zTyjPt7.gif)
 
+## Example Usage
+
+```js
+import { RootFocusRow, focusedCol, focusedRow } from "./Focusable";
+
+const FocusableRow = focusedRow((props) => <div {...props} />);
+const FocusableCol = focusedCol((props) => <div {...props} />);
+
+function App() {
+  return (
+    <RootFocusRow initialFocusNode="row">
+        <FocusableRow name="row" container>
+          <FocusableCol name="col-a" />
+          <FocusableCol name="col-b" />
+        </FocusableRow>
+...
+```
+The one annouying thing is the fact you have to define name for each focusable item. This is currently the most performant way of building the tree without having to generate UIDs and track those. But I don't like this API. The current idea is to possible write a babel plugin that can create those values statically. But I need to give it some more thought!
+
 ## TODO:
 
 - Create example like Netflix
