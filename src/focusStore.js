@@ -67,22 +67,19 @@ const getNextNode = (direction, type) => (node) => {
 
   const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
 
-  if(!~currentIndex || !~nextSiblingIndex) {
-    // FIXME: REFACTOR: this code is ugly!
-    let child = node.parent;
-    if(!node.parent.parent){
-      return node;
-    }
-    let parent = node.parent.parent;
+  if (!~currentIndex || !~nextSiblingIndex) {
+    // FIX: still an issue with this when last node and "backward"
+    const stack = [node.parent];
     let target = false;
-    while(!target) {
-      if(!parent.container) {
-        target = child;
+    while (stack.length > 0) {
+      const node = stack.pop();
+      if (!node.container) {
+        target = node.down;
+      } else if (node.parent) {
+        stack.push({ ...node.parent, down: node });
       }
-      child = parent;
-      parent = parent.parent;
     }
-    return getNextNode(direction, type)(target);
+    return target ? getNextNode(direction, type)(target) : node;
   }
 
   return node.parent.children[nextSiblingIndex];
