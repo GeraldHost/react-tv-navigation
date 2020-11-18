@@ -59,6 +59,35 @@ const getNode = (tree, name) => {
   return currentNode;
 };
 
+const getNextNode = (direction, type) => (node) => {
+  const isForward = direction === "forward";
+  const currentIndex = node.parent.children.findIndex(
+    (c) => c.name === node.name && c.type === type
+  );
+
+  const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
+
+  if(!~currentIndex || !~nextSiblingIndex) {
+    // FIXME: REFACTOR: this code is ugly!
+    let child = node.parent;
+    if(!node.parent.parent){
+      return node;
+    }
+    let parent = node.parent.parent;
+    let target = false;
+    while(!target) {
+      if(!parent.container) {
+        target = child;
+      }
+      child = parent;
+      parent = parent.parent;
+    }
+    return getNextNode(direction, type)(target);
+  }
+
+  return node.parent.children[nextSiblingIndex];
+};
+
 /**
  * Get the next node in the tree
  * @param name {String} name of the current node
@@ -68,31 +97,15 @@ const getNode = (tree, name) => {
  * whole tree to find out the next node
  */
 const nextNode = (tree, name, direction, type) => {
-  const isForward = direction === "forward";
-  const isBackward = direction === "backward";
-
   const currentNode = getNode(tree, name);
+  const getNextNodeFn = getNextNode(direction, type);
 
-  const getNextNode = (node) => {
-    const currentIndex = node.parent.children.findIndex(
-      (c) => c.name === node.name && c.type === type
-    );
-    const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
-    const next = node.parent.children[nextSiblingIndex];
-
-    if (!next) {
-      // handle going next
-      return nextNode(node.parent, node.parent.name, direction, type);
-    }
-
-    return next;
-  };
-
-  if (type !== currentNode.type && currentNode.children.length <= 0) {
-    return getNextNode(currentNode.parent);
+  if (type !== currentNode.type) {
+    return getNextNodeFn(currentNode.parent);
   }
 
-  return getNextNode(currentNode);
+  const node = getNextNodeFn(currentNode);
+  return node;
 };
 
 export const reduceFocus = (state, action) => {
