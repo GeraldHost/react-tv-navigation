@@ -68,7 +68,6 @@ const getNextNode = (direction, type) => (node) => {
   const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
 
   if (!~currentIndex || !~nextSiblingIndex) {
-    // FIX: still an issue with this when last node and "backward"
     const stack = [node.parent];
     let target = false;
     while (stack.length > 0) {
@@ -79,7 +78,7 @@ const getNextNode = (direction, type) => (node) => {
         stack.push({ ...node.parent, down: node });
       }
     }
-    return target ? getNextNode(direction, type)(target) : node;
+    return target && getNextNode(direction, type)(target);
   }
 
   return node.parent.children[nextSiblingIndex];
@@ -98,7 +97,7 @@ const nextNode = (tree, name, direction, type) => {
   const getNextNodeFn = getNextNode(direction, type);
 
   if (type !== currentNode.type) {
-    return getNextNodeFn(currentNode.parent);
+    return getNextNodeFn(currentNode.parent) || currentNode;
   }
 
   const node = getNextNodeFn(currentNode);
