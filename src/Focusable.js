@@ -28,7 +28,7 @@ const useUnmount = (fn) => {
 
 const mapStateToProps = (state, props) => ({
   ...props,
-  active: state.activeNode === props.name,
+  active: state.activeNode.name === props.name,
 });
 
 export const focused = (type) => (Component) => {
@@ -38,7 +38,9 @@ export const focused = (type) => (Component) => {
       const dispatch = useDispatch();
 
       useWillMount(() => {
-        Shim.register(name, "beforeActive", beforeActive);
+        if (beforeActive) {
+          Shim.register(name, "beforeActive", beforeActive);
+        }
         dispatch(addFocusable({ parent, name, type, container }));
       });
 

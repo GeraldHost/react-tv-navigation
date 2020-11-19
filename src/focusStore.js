@@ -108,7 +108,7 @@ export const reduceFocus = (state, action) => {
   const name = action.payload;
   const node = getNode(state.tree, name);
   const activeNode = beforeFocus(node);
-  return { ...state, activeNode: activeNode.name };
+  return { ...state, activeNode: activeNode };
 };
 
 export const reduceAddFocusable = (state, action) => {
@@ -138,18 +138,19 @@ const beforeFocus = (node) => {
 
 export const lrudHandler = (direction, type) => (state) => {
   const { tree, activeNode } = state;
-  let maybeNext = nextNode(tree, activeNode, direction, type);
+  let maybeNext = nextNode(tree, activeNode.name, direction, type);
   if (!maybeNext?.name) {
     return { ...state };
   }
   const next = beforeFocus(maybeNext);
-  return { ...state, activeNode: next.name };
+  return { ...state, activeNode: next };
 };
 
+const rootNode = createNode(null, { name: "root", type: TYPE_ROW });
 const focusReducer = createReducer(
   {
-    tree: createNode(null, { name: "root", type: TYPE_ROW }),
-    activeNode: "root",
+    tree: rootNode,
+    activeNode: rootNode,
   },
   {
     [addFocusable]: reduceAddFocusable,
