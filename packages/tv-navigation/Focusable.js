@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
 import cn from "classnames";
+import { Provider } from "react-redux";
 
 import {
   addFocusable,
@@ -10,6 +11,7 @@ import {
   right,
   up,
   down,
+  store
 } from "./focusStore";
 import Shim from "./shim";
 
@@ -68,7 +70,15 @@ export const focusedCol = focused("col");
 export const focusedRow = focused("row");
 
 const Root = focusedRow((props) => <div {...props} />);
-export const RootFocusRow = ({
+export const RootFocusRow = (props) => {
+  return (
+    <Provider store={store}>
+      <RootFocus {...props} />
+    </Provider>
+  );
+};
+
+export const RootFocus = ({
   children,
   className,
   initialFocusNode = "root",
@@ -101,10 +111,13 @@ export const RootFocusRow = ({
   }, []);
 
   return (
-    <FocusContext.Provider value={{ parent: null }}>
-      <Root name="root" className={className}>
-        {children}
-      </Root>
-    </FocusContext.Provider>
+    <Provider store={store}>
+      <FocusContext.Provider value={{ parent: null }}>
+        <Root name="root" className={className}>
+          {children}
+        </Root>
+      </FocusContext.Provider>
+    </Provider>
   );
 };
+

@@ -1,6 +1,6 @@
 import React from "react";
 import cn from "classnames";
-import { useBeforeActive } from "../Focusable";
+import { useBeforeActive } from "tv-navigation";
 
 export const Col = ({ className, active, type, children, name, ...props }) => {
   const beforeActive = useBeforeActive(name);

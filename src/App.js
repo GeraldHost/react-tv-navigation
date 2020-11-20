@@ -1,9 +1,6 @@
 import React from "react";
-import { Provider } from "react-redux";
-
-import { store } from "./focusStore";
 import { Col, Row, Nav } from "./components";
-import { RootFocusRow, focusedCol, focusedRow } from "./Focusable";
+import { RootFocusRow, focusedCol, focusedRow } from "tv-navigation";
 
 import "./App.css";
 
@@ -16,7 +13,6 @@ const FocusableNavItem = focusedRow(Nav.Item);
 
 function App() {
   return (
-    <Provider store={store}>
       <RootFocusRow className="root-container" initialFocusNode="nav">
         <FocusableNav name="nav" container>
           <FocusableNavItem name="nav-item-a" />
@@ -40,7 +36,6 @@ function App() {
           </FocusableRow>
         </FocusableCol>
       </RootFocusRow>
-    </Provider>
   );
 }
 

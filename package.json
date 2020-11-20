@@ -2,24 +2,16 @@
   "name": "tv-nav",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
-    "@reduxjs/toolkit": "^1.4.0",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "classnames": "^2.2.6",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-redux": "^7.2.2",
-    "react-scripts": "4.0.0",
-    "redux": "^4.0.5",
-    "web-vitals": "^0.2.4"
+    "tv-navigation": "1.0.0",
+    "webpack": "^5.6.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "webpack serve --config ./webpack.config.js --mode development",
     "format": "prettier --write \"src/**/*.js\""
   },
   "eslintConfig": {
@@ -41,6 +33,16 @@
     ]
   },
   "devDependencies": {
-    "prettier": "^2.1.2"
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-syntax-jsx": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.5",
+    "babel-loader": "^8.2.1",
+    "css-loader": "^5.0.1",
+    "html-webpack-plugin": "^4.5.0",
+    "prettier": "^2.1.2",
+    "style-loader": "^2.0.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }
