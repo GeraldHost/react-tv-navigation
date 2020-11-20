@@ -31,6 +31,10 @@ const mapStateToProps = (state, props) => ({
   active: state.activeNode.name === props.name,
 });
 
+export const useBeforeActive = (name) => {
+  return (fn) => void Shim.register(name, "beforeActive", fn);
+};
+
 export const focused = (type) => (Component) => {
   return connect(mapStateToProps)(
     ({ active, name, container, className, beforeActive, ...props }) => {
@@ -38,9 +42,6 @@ export const focused = (type) => (Component) => {
       const dispatch = useDispatch();
 
       useWillMount(() => {
-        if (beforeActive) {
-          Shim.register(name, "beforeActive", beforeActive);
-        }
         dispatch(addFocusable({ parent, name, type, container }));
       });
 

@@ -36,7 +36,10 @@ const walk = (tree, target, callback) => {
 
 const addNode = (tree, parent, newNode) => {
   const callback = (node) => {
-    const children = [...node.children, createNode(parent, newNode)];
+    const children = [
+      ...node.children,
+      { index: node.children.length, ...createNode(parent, newNode) },
+    ];
     return { ...node, children };
   };
   return walk(tree, parent, callback);
@@ -105,10 +108,11 @@ const nextNode = (tree, name, direction, type) => {
 };
 
 export const reduceFocus = (state, action) => {
+  const previousNode = state.activeNode;
   const name = action.payload;
   const node = getNode(state.tree, name);
-  const activeNode = beforeFocus(node);
-  return { ...state, activeNode: activeNode };
+  const activeNode = beforeFocus(node, previousNode);
+  return { ...state, activeNode: activeNode, previousNode };
 };
 
 export const reduceAddFocusable = (state, action) => {
@@ -122,7 +126,7 @@ export const reduceRemoveFocusable = (state, action) => {
   return state;
 };
 
-const beforeFocus = (node) => {
+const beforeFocus = (node, previousNode) => {
   // default behaviour for container nodes is for their first child
   // to recieve focus. We also take a refrence to the parent to pass it
   // into the shimmed functions
@@ -130,10 +134,9 @@ const beforeFocus = (node) => {
     node = node.children[0];
   }
 
-  // run all of the shims which will get passed the maybe next node
-  // and if we are dealing with container nodes the parent will also
-  // get passed in
-  return Shim.run(node, "beforeActive");
+  // run all of the shims which will get passed the next node
+  // and the previous node
+  return Shim.run(node, previousNode, "beforeActive");
 };
 
 export const lrudHandler = (direction, type) => (state) => {
@@ -142,8 +145,9 @@ export const lrudHandler = (direction, type) => (state) => {
   if (!maybeNext?.name) {
     return { ...state };
   }
-  const next = beforeFocus(maybeNext);
-  return { ...state, activeNode: next };
+  const previousNode = activeNode;
+  const next = beforeFocus(maybeNext, previousNode);
+  return { ...state, activeNode: next, previousNode };
 };
 
 const rootNode = createNode(null, { name: "root", type: TYPE_ROW });
@@ -151,6 +155,7 @@ const focusReducer = createReducer(
   {
     tree: rootNode,
     activeNode: rootNode,
+    previousNode: null,
   },
   {
     [addFocusable]: reduceAddFocusable,
