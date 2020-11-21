@@ -6,10 +6,10 @@ The navigation system is based on the idea of a grid. Inspired by [this post](ht
 
 ![tv-navigation-preview](https://i.imgur.com/zTyjPt7.gif)
 
-## Example Usage
+## Basic Usage
 
 ```js
-import { RootFocusRow, focusedCol, focusedRow } from "./Focusable";
+import { RootFocusRow, focusedCol, focusedRow } from "tv-navigation";
 
 const FocusableRow = focusedRow((props) => <div {...props} />);
 const FocusableCol = focusedCol((props) => <div {...props} />);
@@ -24,6 +24,21 @@ function App() {
 ...
 ```
 The one annouying thing is the fact you have to define name for each focusable item. This is currently the most performant way of building the tree without having to generate UIDs and track those. But I don't like this API. The current idea is to possible write a babel plugin that can create those values statically. But I need to give it some more thought!
+
+## Before Active
+before a component becomes active we can register a shim/middleware to change the focus behaviour.
+
+```js
+import { useBeforeActive } from "tv-navigation";
+
+const Component = ({ name, ...props }) => {
+  const beforeActive = useBeforeActive(name);
+  beforeActive((activeNode, previousNode) => activeNode);
+  
+  return ( ... );
+}
+```
+`name` gets passed in from the Focusable hoc. I think it would be nice once we fix the implementation of having to provide a `name` prop to focusable items to set up some context for each focusable component so we wouldn't have to worry about passing in name to `useBeforeActive`.
 
 ## TODO:
 
