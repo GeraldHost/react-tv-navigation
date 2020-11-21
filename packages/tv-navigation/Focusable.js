@@ -11,7 +11,7 @@ import {
   right,
   up,
   down,
-  store
+  store,
 } from "./focusStore";
 import Shim from "./shim";
 
@@ -39,7 +39,7 @@ export const useBeforeActive = (name) => {
 
 export const focused = (type) => (Component) => {
   return connect(mapStateToProps)(
-    ({ active, name, container, className, beforeActive, ...props }) => {
+    ({ active, name, container, className, ...props }) => {
       const { parent } = useFocus();
       const dispatch = useDispatch();
 
@@ -48,7 +48,7 @@ export const focused = (type) => (Component) => {
       });
 
       useUnmount(() => {
-        Shim.unregister(name, "beforeActive");
+        Shim.unregister(name);
         dispatch(removeFocusable({ parent, name, type }));
       });
 
@@ -58,6 +58,8 @@ export const focused = (type) => (Component) => {
             className={cn("focusable", type, className)}
             active={active}
             type={type}
+            name={name}
+            container={container}
             {...props}
           />
         </FocusContext.Provider>
@@ -120,4 +122,3 @@ export const RootFocus = ({
     </Provider>
   );
 };
-

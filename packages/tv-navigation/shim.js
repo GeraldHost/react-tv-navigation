@@ -14,7 +14,7 @@ class Shim {
   }
   unregister(name, type) {
     if (this.shims?.[name]?.[type]) {
-      this.shims[name][type] = undefined;
+      this.shims[name] = {};
     }
   }
   run(_node, previousNode, type, ...args) {
