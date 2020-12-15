@@ -6,6 +6,17 @@ The navigation system is based on the idea of a grid. Inspired by [this post](ht
 
 ![tv-navigation-preview](https://i.imgur.com/zTyjPt7.gif)
 
+## Get started
+This repo uses yarn workspaces to pull in the packages so make sure you use `yarn` to install dependencies. First run:
+```
+yarn
+```
+Then run:
+```
+yarn start
+```
+Good to go. By default it will run on port `8080`
+
 ## Basic Usage
 
 ```js
