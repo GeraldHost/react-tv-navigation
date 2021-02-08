@@ -1,1 +1,7 @@
-export { useBeforeActive, RootFocusRow, focusedCol, focusedRow } from "./Focusable";
+export {
+  useBeforeActive,
+  RootFocusRow,
+  focusedCol,
+  focusedRow,
+} from "./src/Focusable";
+
