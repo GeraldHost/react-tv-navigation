@@ -14,19 +14,10 @@ import {
 } from "./focusStore";
 import Shim from "./shim";
 import { store } from "./store";
+import { useWillMount, useUnmount } from "./utils";
 
 const FocusContext = React.createContext({});
 const useFocus = () => React.useContext(FocusContext);
-
-const useWillMount = (fn) => {
-  useMemo(() => fn(), []);
-};
-
-const useUnmount = (fn) => {
-  useEffect(() => {
-    return () => fn();
-  }, []);
-};
 
 const mapStateToProps = (state, props) => ({
   ...props,
