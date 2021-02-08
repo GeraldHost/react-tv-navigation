@@ -11,9 +11,9 @@ import {
   right,
   up,
   down,
-  store,
 } from "./focusStore";
 import Shim from "./shim";
+import { store } from "./store";
 
 const FocusContext = React.createContext({});
 const useFocus = () => React.useContext(FocusContext);
@@ -30,7 +30,7 @@ const useUnmount = (fn) => {
 
 const mapStateToProps = (state, props) => ({
   ...props,
-  active: state.activeNode.name === props.name,
+  active: state.focus.activeNode.name === props.name,
 });
 
 export const useBeforeActive = (name) => {
