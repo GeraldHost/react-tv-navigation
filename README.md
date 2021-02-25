@@ -51,12 +51,9 @@ const Component = ({ name, ...props }) => {
 ```
 `name` gets passed in from the Focusable hoc. I think it would be nice once we fix the implementation of having to provide a `name` prop to focusable items to set up some context for each focusable component so we wouldn't have to worry about passing in name to `useBeforeActive`.
 
-## TODO:
+## In Progress:
 
-- Create example like Netflix
-- Implement focus on hover to support pointer remotes
-- more tests!
-- Write a babel plugin to do the focus names? rather than making the user set them as a prop?
+- Create `<View />` component to use as stack navigation system
 
 ## Bugs
 
