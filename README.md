@@ -17,6 +17,12 @@ yarn start
 ```
 Good to go. By default it will run on port `8080`
 
+## Main Files
+- `packages/tv-navigation`
+  - `src/focusStore.js` does all the building and traversing of focus tree
+  - `src/Focusable.js` is the Focusable HOC
+
+
 ## Basic Usage
 
 ```js
