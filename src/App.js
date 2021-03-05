@@ -19,9 +19,8 @@ const FocusableNavItem = focusedRow(Nav.Item);
 
 const StatefulRow = focusedRow((props) => {
   const { name } = props;
-
   const { childIndex } = useTrackChild(name);
-  console.log({ childIndex });
+  
   useBeforeActive(
     name,
     (activeNode) => {
