@@ -1,62 +1,71 @@
-import React, { useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
 import cn from "classnames";
-import { Provider } from "react-redux";
 
-import {
+import { focus as focusActions } from "./focus";
+import Shim from "./shim";
+import { store } from "./store";
+import { useWillMount, useUnmount } from "./utils";
+
+const {
+  subscribe,
   addFocusable,
   removeFocusable,
   focus,
   left,
   right,
   up,
-  down,
-} from "./focusStore";
-import Shim from "./shim";
-import { store } from "./store";
-import { useWillMount, useUnmount } from "./utils";
+  down 
+} = focusActions
 
 const FocusContext = React.createContext({});
 const useFocus = () => React.useContext(FocusContext);
 
-const mapStateToProps = (state, props) => ({
-  ...props,
-  active: state.focus.activeNode.name === props.name,
-});
+const useActive = (name) => {
+  const [active, setActive] = useState(false);
+
+  subscribe((state) => {
+    if(state.activeNode.name === name) {
+      setActive(true);
+    } else if (active === true) {
+      setActive(false);
+    }
+  });
+
+  return active;
+}
 
 export const useBeforeActive = (name) => {
   return (fn) => void Shim.register(name, "beforeActive", fn);
 };
 
 export const focused = (type) => (Component) => {
-  return connect(mapStateToProps)(
-    ({ active, name, container, className, ...props }) => {
-      const { parent } = useFocus();
-      const dispatch = useDispatch();
+  return ({ name, container, className, ...props }) => {
+    const { parent } = useFocus();
+    const active = useActive(name);
 
-      useWillMount(() => {
-        dispatch(addFocusable({ parent, name, type, container }));
-      });
+    useWillMount(() => {
+      addFocusable({ parent, name, type, container });
+    });
 
-      useUnmount(() => {
-        Shim.unregister(name);
-        dispatch(removeFocusable({ parent, name, type }));
-      });
+    useUnmount(() => {
+      Shim.unregister(name);
+      removeFocusable({ parent, name, type });
+    });
 
-      return (
-        <FocusContext.Provider value={{ parent: name }}>
-          <Component
-            className={cn("focusable", type, className)}
-            active={active}
-            type={type}
-            name={name}
-            container={container}
-            {...props}
-          />
-        </FocusContext.Provider>
-      );
-    }
-  );
+    return (
+      <FocusContext.Provider value={{ parent: name }}>
+        <Component
+          className={cn("focusable", type, className)}
+          active={active}
+          type={type}
+          name={name}
+          container={container}
+          {...props}
+        />
+      </FocusContext.Provider>
+    );
+  }
 };
 
 export const focusedCol = focused("col");
@@ -64,11 +73,7 @@ export const focusedRow = focused("row");
 
 const Root = focusedRow((props) => <div {...props} />);
 export const RootFocusRow = (props) => {
-  return (
-    <Provider store={store}>
-      <RootFocus {...props} />
-    </Provider>
-  );
+  return (<RootFocus {...props} />);
 };
 
 export const RootFocus = ({
@@ -76,12 +81,10 @@ export const RootFocus = ({
   className,
   initialFocusNode = "root",
 }) => {
-  const dispatch = useDispatch();
-
-  const handleRight = () => void dispatch(right());
-  const handleLeft = () => void dispatch(left());
-  const handleDown = () => void dispatch(down());
-  const handleUp = () => void dispatch(up());
+  const handleRight = () => void right();
+  const handleLeft = () => void left();
+  const handleDown = () => void down();
+  const handleUp = () => void up();
 
   const handleKeyPress = useCallback(
     (event) => {
@@ -98,18 +101,16 @@ export const RootFocus = ({
   );
 
   useEffect(() => {
-    initialFocusNode && dispatch(focus(initialFocusNode));
+    initialFocusNode && focus(initialFocusNode);
     document.addEventListener("keydown", handleKeyPress);
     return () => document.removeEventListener("keydown", handleKeyPress);
   }, []);
 
   return (
-    <Provider store={store}>
-      <FocusContext.Provider value={{ parent: null }}>
-        <Root name="root" className={className}>
-          {children}
-        </Root>
-      </FocusContext.Provider>
-    </Provider>
+    <FocusContext.Provider value={{ parent: null }}>
+      <Root name="root" className={className}>
+        {children}
+      </Root>
+    </FocusContext.Provider>
   );
 };
