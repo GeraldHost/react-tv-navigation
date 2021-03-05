@@ -11,7 +11,6 @@ import {
 import "./App.css";
 
 const FocusableItem = focusedCol(Col);
-const FocusableRow = focusedRow(Row);
 const FocusableCol = focusedCol((props) => <div {...props} />);
 
 const FocusableNav = focusedCol(Nav);
@@ -20,14 +19,10 @@ const FocusableNavItem = focusedRow(Nav.Item);
 const StatefulRow = focusedRow((props) => {
   const { name } = props;
   const { childIndex } = useTrackChild(name);
-  
-  useBeforeActive(
-    name,
-    (activeNode) => {
-      return activeNode.children[childIndex];
-    },
-    [childIndex]
-  );
+
+  useBeforeActive(name, (activeNode) => activeNode.children[childIndex], [
+    childIndex,
+  ]);
 
   return <Row {...props} />;
 });
@@ -56,6 +51,12 @@ function App() {
           <FocusableItem name="node-b-4" />
         </StatefulRow>
       </FocusableCol>
+
+      <FocusableNav name="nav2" container>
+        <FocusableNavItem name="nav2-item-a" />
+        <FocusableNavItem name="nav2-item-b" />
+        <FocusableNavItem name="nav2-item-c" />
+      </FocusableNav>
     </RootFocusRow>
   );
 }
