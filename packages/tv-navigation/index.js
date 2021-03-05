@@ -1,5 +1,5 @@
 export {
-  useBeforeActive,
+  createBeforeActive,
   RootFocusRow,
   focusedCol,
   focusedRow,

@@ -46,16 +46,16 @@ The one annouying thing is the fact you have to define name for each focusable i
 before a component becomes active we can register a shim/middleware to change the focus behaviour.
 
 ```js
-import { useBeforeActive } from "tv-navigation";
+import { createBeforeActive } from "tv-navigation";
 
 const Component = ({ name, ...props }) => {
-  const beforeActive = useBeforeActive(name);
+  const beforeActive = createBeforeActive(name);
   beforeActive((activeNode, previousNode) => activeNode);
   
   return ( ... );
 }
 ```
-`name` gets passed in from the Focusable hoc. I think it would be nice once we fix the implementation of having to provide a `name` prop to focusable items to set up some context for each focusable component so we wouldn't have to worry about passing in name to `useBeforeActive`.
+`name` gets passed in from the Focusable hoc. I think it would be nice once we fix the implementation of having to provide a `name` prop to focusable items to set up some context for each focusable component so we wouldn't have to worry about passing in name to `createBeforeActive`.
 
 ## In Progress:
 

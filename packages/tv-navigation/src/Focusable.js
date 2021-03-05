@@ -35,7 +35,7 @@ const useActive = (name) => {
   return active;
 }
 
-export const useBeforeActive = (name) => {
+export const createBeforeActive = (name) => {
   return (fn) => void Shim.register(name, "beforeActive", fn);
 };
 
