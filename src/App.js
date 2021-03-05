@@ -1,6 +1,12 @@
 import React from "react";
 import { Col, Row, Nav } from "./components";
-import { RootFocusRow, focusedCol, focusedRow } from "tv-navigation";
+import {
+  RootFocusRow,
+  focusedCol,
+  focusedRow,
+  useBeforeActive,
+  useTrackChild,
+} from "tv-navigation";
 
 import "./App.css";
 
@@ -10,6 +16,22 @@ const FocusableCol = focusedCol((props) => <div {...props} />);
 
 const FocusableNav = focusedCol(Nav);
 const FocusableNavItem = focusedRow(Nav.Item);
+
+const StatefulRow = focusedRow((props) => {
+  const { name } = props;
+
+  const { childIndex } = useTrackChild(name);
+  console.log({ childIndex });
+  useBeforeActive(
+    name,
+    (activeNode) => {
+      return activeNode.children[childIndex];
+    },
+    [childIndex]
+  );
+
+  return <Row {...props} />;
+});
 
 function App() {
   return (
@@ -21,19 +43,19 @@ function App() {
       </FocusableNav>
 
       <FocusableCol name="node" container>
-        <FocusableRow name="node-a" className="row-container" container>
+        <StatefulRow name="node-a" className="row-container">
           <FocusableItem name="node-a-1" />
           <FocusableItem name="node-a-2" />
           <FocusableItem name="node-a-3" />
           <FocusableItem name="node-a-4" />
-        </FocusableRow>
+        </StatefulRow>
 
-        <FocusableRow name="node-b" className="row-container" container>
+        <StatefulRow name="node-b" className="row-container">
           <FocusableItem name="node-b-1" />
           <FocusableItem name="node-b-2" />
           <FocusableItem name="node-b-3" />
           <FocusableItem name="node-b-4" />
-        </FocusableRow>
+        </StatefulRow>
       </FocusableCol>
     </RootFocusRow>
   );

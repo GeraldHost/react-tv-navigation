@@ -27,11 +27,12 @@ const beforeFocus = (node, previousNode) => {
 function createFocus() {
 	let state = initialState;
 	let listeners = [];
+	const helpers = { getNode };
 
 	const updateState = (newState) => {
 		state = { ...newState }
 		for (let i = 0; i < listeners.length; i++) {
-			listeners[i](state)
+			listeners[i](state, helpers)
 		}
 	}
 
@@ -41,6 +42,22 @@ function createFocus() {
 	  const activeNode = beforeFocus(node, previousNode);
 	  updateState({ ...state, activeNode: activeNode, previousNode });
 	};
+
+	const focusChild = (n) => {
+		const activeNode = state.activeNode;
+		if(!activeNode.parent) {
+			// there is no parent so there will be no siblings
+			return
+		}
+
+		const parentNode = getNode(state.tree, activeNode.parent);
+		const childNode = parentNode.children[n]
+		if(!childNode) {
+			// this child node doesn't exist
+			return
+		}
+		focus(children.name)
+	}
 
 	const addFocusable = (node) => {
 	  const { parent, ...newNode } = node;
@@ -76,6 +93,7 @@ function createFocus() {
 		addFocusable, 
 		removeFocusable, 
 		subscribe,
+		focusChild,
 		right: lrudHandler("forward", TYPE_COL),
 		left: lrudHandler("backward", TYPE_COL),
 		up: lrudHandler("backward", TYPE_ROW),

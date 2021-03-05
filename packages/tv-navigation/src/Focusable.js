@@ -1,10 +1,8 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { connect, useDispatch } from "react-redux";
+import React, { useState, useEffect, useCallback } from "react";
 import cn from "classnames";
 
 import { focus as focusActions } from "./focus";
 import Shim from "./shim";
-import { store } from "./store";
 import { useWillMount, useUnmount } from "./utils";
 
 const {
@@ -15,8 +13,8 @@ const {
   left,
   right,
   up,
-  down 
-} = focusActions
+  down,
+} = focusActions;
 
 const FocusContext = React.createContext({});
 const useFocus = () => React.useContext(FocusContext);
@@ -25,18 +23,46 @@ const useActive = (name) => {
   const [active, setActive] = useState(false);
 
   subscribe((state) => {
-    if(state.activeNode.name === name) {
+    if (state.activeNode.name === name) {
       setActive(true);
-    } else if (active === true) {
+    } else if (active !== true) {
       setActive(false);
     }
   });
 
   return active;
-}
+};
 
-export const createBeforeActive = (name) => {
-  return (fn) => void Shim.register(name, "beforeActive", fn);
+export const useBeforeActive = (name, fn, deps) => {
+  useEffect(() => {
+    Shim.register(name, "beforeActive", fn);
+  }, deps);
+
+  useUnmount(() => {
+    Shim.unregister(name, "beforeActive");
+  });
+};
+
+export const useTrackChild = (name) => {
+  const [childIndex, setChildIndex] = useState(0);
+  const [child, setChild] = useState(null);
+
+  useEffect(() => {
+    subscribe((state, helpers) => {
+      if (state.activeNode.parent === name) {
+        const parentNode = helpers.getNode(state.tree, state.activeNode.parent);
+        const idx = parentNode.children?.findIndex(
+          (child) => child.name === state.activeNode.name
+        );
+        if (!!~idx) {
+          setChildIndex(idx);
+          setChild(parentNode.children[idx]);
+        }
+      }
+    });
+  }, []);
+
+  return { childIndex, child };
 };
 
 export const focused = (type) => (Component) => {
@@ -65,7 +91,7 @@ export const focused = (type) => (Component) => {
         />
       </FocusContext.Provider>
     );
-  }
+  };
 };
 
 export const focusedCol = focused("col");
@@ -73,7 +99,7 @@ export const focusedRow = focused("row");
 
 const Root = focusedRow((props) => <div {...props} />);
 export const RootFocusRow = (props) => {
-  return (<RootFocus {...props} />);
+  return <RootFocus {...props} />;
 };
 
 export const RootFocus = ({
