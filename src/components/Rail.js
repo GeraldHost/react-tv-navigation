@@ -24,7 +24,7 @@ export const Rail = focusedCol(
     const { childIndex } = useTrackImediateChild(props.name);
     const verticalOffset = childIndex * (railHeight + 2 * gutter);
 
-    return (
+    return ( 
       <div
         className={cn("rail", className)}
         {...props}

@@ -37,4 +37,5 @@ module.exports = {
     contentBase: path.resolve(__dirname, './dist'),
     hot: true,
   },
+  devtool: 'source-map'
 };
