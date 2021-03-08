@@ -15,6 +15,7 @@ import "./rail.css";
  */
 
 const vw = (str) => `${str}vw`;
+const percentage = (str) => `${str}%`;
 
 const RailContext = createContext({});
 const useRail = () => useContext(RailContext);
@@ -24,13 +25,15 @@ export const Rail = focusedCol(
     const { childIndex } = useTrackImediateChild(props.name);
     const verticalOffset = childIndex * (railHeight + 2 * gutter);
 
-    return ( 
+    return (
       <div
         className={cn("rail", className)}
         {...props}
         style={{ transform: `translateY(-${vw(verticalOffset)})` }}
       >
-        <RailContext.Provider value={{ gutter, tileWidth, railHeight }}>
+        <RailContext.Provider
+          value={{ gutter, tileWidth, railHeight, tileCount: children.length }}
+        >
           {children}
         </RailContext.Provider>
       </div>
@@ -40,15 +43,32 @@ export const Rail = focusedCol(
 
 const RailRow = focusedRow(({ active, className, ...props }) => {
   const { childIndex } = useTrackImediateChild(props.name);
-  const { gutter, tileWidth } = useRail();
+  const { tileWidth } = useRail();
 
-  const horizantalOffset = childIndex * (tileWidth + 2 * gutter);
+  const tileCount = props.children.length;
+  const maxOffset = tileWidth * tileCount - 100;
+  let horizantalPercentageOffset = childIndex * tileWidth;
+  if (horizantalPercentageOffset > maxOffset) {
+    horizantalPercentageOffset = maxOffset;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    for (let i = 0; i < props.children.length; i++) {
+      if (props.children[i].type.displayName !== "rail-tile") {
+        throw new Error("Children of rail rows must be rail tiles");
+      }
+    }
+  }
 
   return (
     <div
       className={cn("rail-row", className)}
       {...props}
-      style={{ transform: `translateX(-${vw(horizantalOffset)})` }}
+      style={{
+        transform: `translateX(calc(-${percentage(
+          horizantalPercentageOffset
+        )}))`,
+      }}
     />
   );
 });
@@ -62,12 +82,15 @@ const RailTile = focusedCol(({ active, className, ...props }) => {
       {...props}
       style={{
         height: vw(railHeight),
-        width: vw(tileWidth),
+        width: `calc(${percentage(tileWidth)} - ${vw(gutter * 2)})`,
         margin: vw(gutter),
       }}
     />
   );
 });
+
+RailRow.displayName = "rail-row";
+RailTile.displayName = "rail-tile";
 
 Rail.Row = RailRow;
 Rail.Tile = RailTile;
