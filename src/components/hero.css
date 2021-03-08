@@ -7,7 +7,16 @@
   font-size: 5vw;
 }
 
-.hero button {
-  font-size: 2vw;
-  padding: 0.2vw 1.2vw;
+.hero .btn {
+	background: #f2f2f2;
+	color: black;
+	border: 0;
+	border-radius: 1vw;
+	font-size: 2vw;
+	  padding: 0.5vw 1.8vw;
+}
+
+.hero .btn.btn-active {
+	background: blue;
+	color: white;
 }

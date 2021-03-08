@@ -26,16 +26,18 @@ export const Rail = focusedCol(
     const verticalOffset = childIndex * (railHeight + 2 * gutter);
 
     return (
-      <div
-        className={cn("rail", className)}
-        {...props}
-        style={{ transform: `translateY(-${vw(verticalOffset)})` }}
-      >
-        <RailContext.Provider
-          value={{ gutter, tileWidth, railHeight, tileCount: children.length }}
+      <div className="rail-wrapper">
+        <div
+          className={cn("rail", className)}
+          {...props}
+          style={{ transform: `translateY(-${vw(verticalOffset)})` }}
         >
-          {children}
-        </RailContext.Provider>
+          <RailContext.Provider
+            value={{ gutter, tileWidth, railHeight, tileCount: children.length }}
+          >
+            {children}
+          </RailContext.Provider>
+        </div>
       </div>
     );
   }
