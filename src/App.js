@@ -10,9 +10,9 @@ function App() {
       <RootFocusRow className="root-container" initialFocusNode="nav">
         <Layout.Sidebar>
           <Nav name="nav" container>
-            <Nav.Item name="nav-item-a" />
-            <Nav.Item name="nav-item-b" />
-            <Nav.Item name="nav-item-c" />
+            <Nav.Item name="nav-item-a" icon="H">Home</Nav.Item>
+            <Nav.Item name="nav-item-b" icon="C">Channels</Nav.Item>
+            <Nav.Item name="nav-item-c" icon="S">Settings</Nav.Item>
           </Nav>
         </Layout.Sidebar>
         <Layout.Main>

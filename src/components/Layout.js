@@ -1,9 +1,12 @@
 import React from "react";
+import cn from "classnames";
+import { useActive } from "tv-navigation";
 
 import "./layout.css";
 
 export const Layout = ({ children }) => {
-  return <div className="layout">{children}</div>;
+const active = useActive("nav", false);
+  return <div className={cn("layout", {"sidebar-open": active})}>{children}</div>;
 };
 
 export const Main = ({ children }) => {

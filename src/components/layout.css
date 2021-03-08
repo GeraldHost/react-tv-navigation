@@ -6,17 +6,28 @@
 }
 
 .sidebar {
-  width: 200px;
+  width: 95px;
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
+  overflow: hidden;
+  transition: all 200ms;
 }
 
 .main {
   position: absolute;
   top: 0;
-  left: 200px;
+  left: 95px;
   right: 0;
   bottom: 0;
+  transition: all 200ms;
+}
+
+.layout.sidebar-open .sidebar {
+  width: 320px;
+}
+
+.layout.sidebar-open .main {
+  left: 320px;
 }

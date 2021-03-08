@@ -1,15 +1,34 @@
 .nav {
-  max-width: 240px;
+  width: 100%;
+  display: flex;
+  padding-top: 5vh;
 }
 
 .nav-item {
-  border: 2px solid blue;
-  margin: 20px;
   flex-grow: 0;
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  padding: 1vw 1vw 1vw 6vw;
+  margin: 0.5vw 0;
+  font-size: 1.8vw;
+  display: block !important;
+  position: relative;
 }
 
 .nav-item.active {
   background-color: blue;
+}
+
+.nav-item-icon {
+	top: 50%;
+	left: 1vw;
+	display: block;
+	transform: translateY(-50%);
+	padding: 0.4vw;
+	width: 2.5vw;
+	text-align: center;
+	border-radius: 1vw;
+	font-size: 1.5vw;
+	background-color: black;
+	position: absolute;
+	color: white;
 }
