@@ -30,7 +30,7 @@ function App() {
               name="node"
               container
               tileWidth={20}
-              railHeight={15}
+              railHeight={13}
               gutter={1}
             >
               <Rail.Row name="node-a" container className="row-container">
@@ -46,6 +46,27 @@ function App() {
                 <Rail.Tile name="node-b-2" />
                 <Rail.Tile name="node-b-3" />
                 <Rail.Tile name="node-b-4" />
+                <Rail.Tile name="node-b-5" />
+                <Rail.Tile name="node-b-6" />
+                <Rail.Tile name="node-b-7" />
+              </Rail.Row>
+              <Rail.Row name="node-c" container className="row-container">
+                <Rail.Tile name="node-c-1" />
+                <Rail.Tile name="node-c-2" />
+                <Rail.Tile name="node-c-3" />
+                <Rail.Tile name="node-c-4" />
+                <Rail.Tile name="node-c-5" />
+                <Rail.Tile name="node-c-6" />
+                <Rail.Tile name="node-c-7" />
+              </Rail.Row>
+              <Rail.Row name="node-d" container className="row-container">
+                <Rail.Tile name="node-d-1" />
+                <Rail.Tile name="node-d-2" />
+                <Rail.Tile name="node-d-3" />
+                <Rail.Tile name="node-d-4" />
+                <Rail.Tile name="node-d-5" />
+                <Rail.Tile name="node-d-6" />
+                <Rail.Tile name="node-d-7" />
               </Rail.Row>
             </Rail>
           </Layout.Row>

@@ -23,7 +23,23 @@ const useRail = () => useContext(RailContext);
 export const Rail = focusedCol(
   ({ tileWidth, railHeight, gutter, children, className, ...props }) => {
     const { childIndex } = useTrackImediateChild(props.name);
-    const verticalOffset = childIndex * (railHeight + 2 * gutter);
+
+    let verticalOffset = childIndex * (railHeight + 2 * gutter);
+    const maxOffset =
+      children.length * (railHeight + 2 * gutter) - (2 * railHeight + 2 * gutter);
+    if (verticalOffset > maxOffset) {
+      verticalOffset = maxOffset;
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      for (let i = 0; i < children.length; i++) {
+        if (children[i].type.displayName !== "rail-row") {
+          throw new Error(
+            "Children of rail rows must be rail tiles <Rail.Row />"
+          );
+        }
+      }
+    }
 
     return (
       <div className="rail-wrapper">

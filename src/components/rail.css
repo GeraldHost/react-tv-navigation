@@ -1,12 +1,11 @@
 .rail-wrapper {
   width: 100%;
-  height: 100vh;
+  height: 60vh;
   overflow: hidden;
 }
 
 .rail {
   width: 100%;
-  height: 100%;
   overflow: hidden;
 }
 
@@ -17,8 +16,6 @@
 
 .rail-tile {
   border: dashed 2px black;
-  width: 100px;
-  height: 100px;
   margin: 20px;
   flex-shrink: 0;
   transition: transform 200ms;

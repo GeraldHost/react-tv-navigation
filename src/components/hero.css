@@ -1,6 +1,14 @@
 .hero {
   width: 100%;
   padding: 2vw;
+  box-sizing: border-box;
+  transition: all 200ms;
+  height: 40vh;
+}
+
+.hero-active {
+  padding: 2vw;
+  height: 50vh;
 }
 
 .hero h1 {
@@ -8,15 +16,15 @@
 }
 
 .hero .btn {
-	background: #f2f2f2;
-	color: black;
-	border: 0;
-	border-radius: 1vw;
-	font-size: 2vw;
-	  padding: 0.5vw 1.8vw;
+  background: #f2f2f2;
+  color: black;
+  border: 0;
+  border-radius: 1vw;
+  font-size: 2vw;
+  padding: 0.5vw 1.8vw;
 }
 
 .hero .btn.btn-active {
-	background: blue;
-	color: white;
+  background: blue;
+  color: white;
 }
