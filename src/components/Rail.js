@@ -55,7 +55,9 @@ const RailRow = focusedRow(({ active, className, ...props }) => {
   if (process.env.NODE_ENV === "development") {
     for (let i = 0; i < props.children.length; i++) {
       if (props.children[i].type.displayName !== "rail-tile") {
-        throw new Error("Children of rail rows must be rail tiles");
+        throw new Error(
+          "Children of rail rows must be rail tiles <Rail.Tile />"
+        );
       }
     }
   }
