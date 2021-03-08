@@ -6,7 +6,7 @@ The navigation system is based on the idea of a grid. Inspired by [this post](ht
 
 ## [Demo click here](https://geraldhost.github.io/react-tv-navigation/)
 
-![tv-navigation-preview](https://i.imgur.com/zTyjPt7.gif)
+![tv-navigation-preview](https://i.imgur.com/GdU0WSc.gif)
 
 ## Get started
 
