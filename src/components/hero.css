@@ -1,0 +1,13 @@
+.hero {
+  width: 100%;
+  padding: 2vw;
+}
+
+.hero h1 {
+  font-size: 5vw;
+}
+
+.hero button {
+  font-size: 2vw;
+  padding: 0.2vw 1.2vw;
+}
