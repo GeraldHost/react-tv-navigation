@@ -1,0 +1,73 @@
+import React, { createContext, useContext } from "react";
+import cn from "classnames";
+import { focusedCol, focusedRow, useTrackImediateChild } from "tv-navigation";
+
+import "./rail.css";
+
+/**
+ * Example:
+ * <Rail gutter={20} cols={5} rows={4} /> // this would produce grid with 5 cols and 4 rows
+ *
+ * const { gutter, colWidth, colHeight } = useRail()
+ *
+ * const verticalOffset = childIndex*colHeight+(2*gutter)
+ * const horizantalOffset = childIndex*colWidth+(2*gutter)
+ */
+
+const vw = (str) => `${str}vw`;
+
+const RailContext = createContext({});
+const useRail = () => useContext(RailContext);
+
+export const Rail = focusedCol(
+  ({ tileWidth, railHeight, gutter, children, className, ...props }) => {
+    const { childIndex } = useTrackImediateChild(props.name);
+    const verticalOffset = childIndex * (railHeight + 2 * gutter);
+
+    return (
+      <div
+        className={cn("rail", className)}
+        {...props}
+        style={{ transform: `translateY(-${vw(verticalOffset)})` }}
+      >
+        <RailContext.Provider value={{ gutter, tileWidth, railHeight }}>
+          {children}
+        </RailContext.Provider>
+      </div>
+    );
+  }
+);
+
+const RailRow = focusedRow(({ active, className, ...props }) => {
+  const { childIndex } = useTrackImediateChild(props.name);
+  const { gutter, tileWidth } = useRail();
+
+  const horizantalOffset = childIndex * (tileWidth + 2 * gutter);
+
+  return (
+    <div
+      className={cn("rail-row", className)}
+      {...props}
+      style={{ transform: `translateX(-${vw(horizantalOffset)})` }}
+    />
+  );
+});
+
+const RailTile = focusedCol(({ active, className, ...props }) => {
+  const { gutter, tileWidth, railHeight } = useRail();
+
+  return (
+    <div
+      className={cn("rail-tile", className, { active })}
+      {...props}
+      style={{
+        height: vw(railHeight),
+        width: vw(tileWidth),
+        margin: vw(gutter),
+      }}
+    />
+  );
+});
+
+Rail.Row = RailRow;
+Rail.Tile = RailTile;

@@ -43,26 +43,29 @@ export const useBeforeActive = (name, fn, deps) => {
   });
 };
 
-export const useTrackChild = (name) => {
-  const [childIndex, setChildIndex] = useState(0);
+export const useTrackImediateChild = (name) => {
   const [child, setChild] = useState(null);
 
   useEffect(() => {
     subscribe((state, helpers) => {
-      if (state.activeNode.parent === name) {
-        const parentNode = helpers.getNode(state.tree, state.activeNode.parent);
-        const idx = parentNode.children?.findIndex(
-          (child) => child.name === state.activeNode.name
-        );
-        if (!!~idx) {
-          setChildIndex(idx);
-          setChild(parentNode.children[idx]);
+      if (state.activeNode.focusPath.includes(`${name}/`)) {
+        const focusedNodes = state.activeNode.focusPath.split("/");
+        const idx = focusedNodes.indexOf(name);
+        if (!!~idx && focusedNodes[idx + 1]) {
+          // find index of our target in this named nodes children
+          const targetName = focusedNodes[idx + 1];
+          const targetNode = helpers.getNode(state.tree, targetName);
+          if (targetNode) {
+            setChild(targetNode);
+          }
         }
       }
     });
   }, []);
 
-  return { childIndex, child };
+  const childIndex = child?.index || 0;
+
+  return { child, childIndex };
 };
 
 export const focused = (type) => (Component) => {

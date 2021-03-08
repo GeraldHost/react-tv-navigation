@@ -1,62 +1,33 @@
 import React from "react";
-import { Col, Row, Nav } from "./components";
-import {
-  RootFocusRow,
-  focusedCol,
-  focusedRow,
-  useBeforeActive,
-  useTrackChild,
-} from "tv-navigation";
+import { Nav, Rail } from "./components";
+import { RootFocusRow } from "tv-navigation";
 
 import "./App.css";
-
-const FocusableItem = focusedCol(Col);
-const FocusableCol = focusedCol((props) => <div {...props} />);
-
-const FocusableNav = focusedCol(Nav);
-const FocusableNavItem = focusedRow(Nav.Item);
-
-const StatefulRow = focusedRow((props) => {
-  const { name } = props;
-  const { childIndex } = useTrackChild(name);
-
-  useBeforeActive(name, (activeNode) => activeNode.children[childIndex], [
-    childIndex,
-  ]);
-
-  return <Row {...props} />;
-});
 
 function App() {
   return (
     <RootFocusRow className="root-container" initialFocusNode="nav">
-      <FocusableNav name="nav" container>
-        <FocusableNavItem name="nav-item-a" />
-        <FocusableNavItem name="nav-item-b" />
-        <FocusableNavItem name="nav-item-c" />
-      </FocusableNav>
+      <Nav name="nav" container>
+        <Nav.Item name="nav-item-a" />
+        <Nav.Item name="nav-item-b" />
+        <Nav.Item name="nav-item-c" />
+      </Nav>
 
-      <FocusableCol name="node" container>
-        <StatefulRow name="node-a" className="row-container">
-          <FocusableItem name="node-a-1" />
-          <FocusableItem name="node-a-2" />
-          <FocusableItem name="node-a-3" />
-          <FocusableItem name="node-a-4" />
-        </StatefulRow>
+      <Rail name="node" container tileWidth={10} railHeight={10} gutter={1}>
+        <Rail.Row name="node-a" container className="row-container">
+          <Rail.Tile name="node-a-1" />
+          <Rail.Tile name="node-a-2" />
+          <Rail.Tile name="node-a-3" />
+          <Rail.Tile name="node-a-4" />
+        </Rail.Row>
 
-        <StatefulRow name="node-b" className="row-container">
-          <FocusableItem name="node-b-1" />
-          <FocusableItem name="node-b-2" />
-          <FocusableItem name="node-b-3" />
-          <FocusableItem name="node-b-4" />
-        </StatefulRow>
-      </FocusableCol>
-
-      <FocusableNav name="nav2" container>
-        <FocusableNavItem name="nav2-item-a" />
-        <FocusableNavItem name="nav2-item-b" />
-        <FocusableNavItem name="nav2-item-c" />
-      </FocusableNav>
+        <Rail.Row name="node-b" container className="row-container">
+          <Rail.Tile name="node-b-1" />
+          <Rail.Tile name="node-b-2" />
+          <Rail.Tile name="node-b-3" />
+          <Rail.Tile name="node-b-4" />
+        </Rail.Row>
+      </Rail>
     </RootFocusRow>
   );
 }

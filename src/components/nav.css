@@ -1,0 +1,15 @@
+.nav {
+  max-width: 240px;
+}
+
+.nav-item {
+  border: 2px solid blue;
+  margin: 20px;
+  flex-grow: 0;
+  width: 100px;
+  height: 100px;
+}
+
+.nav-item.active {
+  background-color: blue;
+}

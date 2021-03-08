@@ -3,6 +3,6 @@ export {
   RootFocusRow,
   focusedCol,
   focusedRow,
-  useTrackChild,
+  useTrackImediateChild,
 } from "./src/Focusable";
 export { focus } from "./src/focus";

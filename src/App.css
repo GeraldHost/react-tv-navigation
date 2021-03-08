@@ -15,19 +15,6 @@ body {
   flex-grow: 0 !important;
 }
 
-.nav {
-  max-width: 240px;
-}
-
-.nav-item {
-  border: 2px solid blue;
-  margin: 20px;
-}
-
-.nav-item.active {
-  background-color: blue;
-}
-
 .item {
   border: dashed 2px black;
   width: 100px;
@@ -45,7 +32,7 @@ body {
 
 .focusable {
   display: flex;
-  flex: 1 1 auto;
+  /*flex: 1 1 auto;*/
 }
 
 .focusable.col {
