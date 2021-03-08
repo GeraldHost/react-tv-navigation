@@ -19,16 +19,17 @@ const {
 const FocusContext = React.createContext({});
 const useFocus = () => React.useContext(FocusContext);
 
-const useActive = (name) => {
+export const useActive = (name, exact = true) => {
   const [active, setActive] = useState(false);
 
-  subscribe((state) => {
-    if (state.activeNode.name === name) {
-      setActive(true);
-    } else if (active !== true) {
-      setActive(false);
-    }
-  });
+  useEffect(() => {
+    subscribe((state) => {
+      const match = exact 
+        ? state.activeNode.name === name 
+        : state.activeNode.focusPath.includes(`${name}/`)
+      setActive(match);
+    });
+  }, [])
 
   return active;
 };
@@ -56,7 +57,9 @@ export const useTrackImediateChild = (name) => {
           const targetName = focusedNodes[idx + 1];
           const targetNode = helpers.getNode(state.tree, targetName);
           if (targetNode) {
-            setChild(targetNode);
+            // only set to a new value if the node is different
+            // this prevents unneeded rerenders
+            setChild(curr => curr?.name === targetNode.name ? curr : targetNode);
           }
         }
       }
