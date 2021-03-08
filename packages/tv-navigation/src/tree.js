@@ -49,8 +49,8 @@ export const getNode = (tree, name) => {
 export const getNextNode = (direction, type) => (node) => {
   // if there is no parent that means we are at the root node and there is no
   // where for use to go. so we just return and the active focus node does not change
-  if(!node.parent) {
-    return
+  if (!node.parent) {
+    return;
   }
 
   const isForward = direction === "forward";
@@ -60,7 +60,11 @@ export const getNextNode = (direction, type) => (node) => {
 
   const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
 
-  if (!~currentIndex || !~nextSiblingIndex || (!node.parent.children[nextSiblingIndex] && node.parent)) {
+  if (
+    !~currentIndex ||
+    !~nextSiblingIndex ||
+    !node.parent.children[nextSiblingIndex]
+  ) {
     // push the parent node onto the stack
     const stack = [node.parent];
     let target = false;
