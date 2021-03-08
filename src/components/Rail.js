@@ -33,7 +33,12 @@ export const Rail = focusedCol(
           style={{ transform: `translateY(-${vw(verticalOffset)})` }}
         >
           <RailContext.Provider
-            value={{ gutter, tileWidth, railHeight, tileCount: children.length }}
+            value={{
+              gutter,
+              tileWidth,
+              railHeight,
+              tileCount: children.length,
+            }}
           >
             {children}
           </RailContext.Provider>

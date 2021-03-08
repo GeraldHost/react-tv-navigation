@@ -73,7 +73,6 @@ export const getNextNode = (direction, type) => (node) => {
 
     // push the parent node onto the stack
     const stack = [node.parent];
-    let target = false;
     while (stack.length > 0) {
       const searchNode = stack.pop();
 
@@ -85,15 +84,18 @@ export const getNextNode = (direction, type) => (node) => {
         // need to go up another parent level and perform the move from there
         stack.push(searchNode.parent);
       } else {
-        // return the first child
+        // THIS IS SO UGLY, update it! :)
         if(searchNode.type !== type) {
+          // the node type does not match the movement type so we need to look up to the parent
           stack.push(searchNode.parent);
         } else {
+          // the hnode type matches the movement type so we should try and find a sibling node to focus to
           const searchNodeIdx = searchNode.parent?.children.findIndex(node => node.name === searchNode.name);
           const searchNodeSibling = searchNode.parent.children[searchNodeIdx+(isForward ? 1 : -1)];
           if(searchNodeSibling){
             return searchNodeSibling;
           } else {
+            // if there are no siblings then go up to the parent and go again
             stack.push(searchNode.parent);
           }
         }
