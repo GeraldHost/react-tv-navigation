@@ -60,7 +60,7 @@ export const getNextNode = (direction, type) => (node) => {
 
   const nextSiblingIndex = currentIndex + (isForward ? 1 : -1);
 
-  if(!~currentIndex) {
+  if (!~currentIndex) {
     // there is no current Index. this means the node provided does not exist
     // as a child of it's "parent". This means something has gone wrong so we just
     // return the current Node
@@ -77,27 +77,27 @@ export const getNextNode = (direction, type) => (node) => {
       const searchNode = stack.pop();
 
       const isContainer = searchNode.container;
-      const isOnlyChild = searchNode.parent?.children.length <= 1
+      const isOnlyChild = searchNode.parent?.children.length <= 1;
 
-      if(isContainer && isOnlyChild) {
-        // if the node is a container and it has no siblings then we 
+      if (isContainer && isOnlyChild) {
+        // if the node is a container and it has no siblings then we
         // need to go up another parent level and perform the move from there
         stack.push(searchNode.parent);
+      } else if (searchNode.type !== type) {
+        // the node type does not match the movement type so we need to look up to the parent
+        stack.push(searchNode.parent);
       } else {
-        // THIS IS SO UGLY, update it! :)
-        if(searchNode.type !== type) {
-          // the node type does not match the movement type so we need to look up to the parent
-          stack.push(searchNode.parent);
+        // the hnode type matches the movement type so we should try and find a sibling node to focus to
+        const searchNodeIdx = searchNode.parent?.children.findIndex(
+          (node) => node.name === searchNode.name
+        );
+        const searchNodeSibling =
+          searchNode.parent.children[searchNodeIdx + (isForward ? 1 : -1)];
+        if (searchNodeSibling) {
+          return searchNodeSibling;
         } else {
-          // the hnode type matches the movement type so we should try and find a sibling node to focus to
-          const searchNodeIdx = searchNode.parent?.children.findIndex(node => node.name === searchNode.name);
-          const searchNodeSibling = searchNode.parent.children[searchNodeIdx+(isForward ? 1 : -1)];
-          if(searchNodeSibling){
-            return searchNodeSibling;
-          } else {
-            // if there are no siblings then go up to the parent and go again
-            stack.push(searchNode.parent);
-          }
+          // if there are no siblings then go up to the parent and go again
+          stack.push(searchNode.parent);
         }
       }
     }
@@ -121,7 +121,7 @@ export const nextNode = (tree, name, direction, type) => {
   if (type !== currentNode.type) {
     // if the current node type and the move type are different then go up to the parent
     // and perform the move from there. If there is no parent then return current node
-    if(!currentNode.parent) {
+    if (!currentNode.parent) {
       // nothing we can do so return current node
       return currentNode;
     }
